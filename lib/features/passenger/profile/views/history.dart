@@ -8,41 +8,39 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
 
-        appBar: customAppBar(title: 'History'),
+      appBar: customAppBar(title: 'History'),
 
-        body: Column(
-          children: [
-            SizedBox(
-              height: 30.h,
+      body: Column(
+        children: [
+          SizedBox(
+            height: 30.h,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+            child: Column(
+              children: [
+                buildHistoryItem(
+                  carLogo: 'assets/images/travel_car.svg',
+                  time: '4/4/2004 , 4:44 PM',
+                  amount: '122 SEK',
+                  travelStatus: 'Scheduledreturn',
+                  btnName: 'Completed',
+                ),
+
+                buildHistoryItem(
+                  carLogo: 'assets/images/travel_15848612.svg',
+                  time: '4/4/2004 , 4:44 PM',
+                  amount: '122 SEK',
+                  travelStatus: 'Normal Ride',
+                  btnName: 'Canceled',
+                ),
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0.w),
-              child: Column(
-                children: [
-                  buildHistoryItem(
-                    carLogo: 'assets/images/travel_car.svg',
-                    time: '4/4/2004 , 4:44 PM',
-                    amount: '122 SEK',
-                    travelStatus: 'Scheduledreturn',
-                    btnName: 'Completed',
-                  ),
-
-                  buildHistoryItem(
-                    carLogo: 'assets/images/travel_15848612.svg',
-                    time: '4/4/2004 , 4:44 PM',
-                    amount: '122 SEK',
-                    travelStatus: 'Normal Ride',
-                    btnName: 'Canceled',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

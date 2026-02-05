@@ -10,107 +10,105 @@ class CardDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
-        body: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Image.asset(
-                  'assets/images/wallet_background.png',
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  // height: 220.h,
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
+      body: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Image.asset(
+                'assets/images/wallet_background.png',
+                width: double.infinity,
+                fit: BoxFit.cover,
+                // height: 220.h,
+              ),
+              Positioned(
+                // // top: 10,
+                left: 20.w,
+                right: 20.w,
+                bottom: -40.h,
+                child: Column(
+                  children: [
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.arrow_back_rounded,
+                            color: Color(0xffEAECF0),
+                            size: 24.w,
+                          ),
+                        ),
+                        // SizedBox(width: 5.w),
+                        Spacer(flex: 2),
+                        Center(
+                          child: Text(
+                            'Card details',
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Spacer(flex: 3),
+                      ],
+                    ),
+                    SizedBox(height: 24.h),
+                    //----------------------------------- card item---------------
+                    CardItem(
+                      // isPinned: isPinned,
+                      bankLogo: 'assets/images/Group.svg',
+                      bankName: 'Aareal Bank AG ',
+                      serialNum: 'XXXXXXXXX236',
+                    ),
+                  ],
                 ),
-                Positioned(
-                  // // top: 10,
-                  left: 20.w,
-                  right: 20.w,
-                  bottom: -40.h,
-                  child: Column(
-                    children: [
-                      Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Icon(
-                              Icons.arrow_back_rounded,
-                              color: Color(0xffEAECF0),
-                              size: 24.w,
-                            ),
-                          ),
-                          // SizedBox(width: 5.w),
-                          Spacer(flex: 2),
-                          Center(
-                            child: Text(
-                              'Card details',
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          Spacer(flex: 3),
-                        ],
+              ),
+            ],
+          ),
+
+          SizedBox(height: 40.h),
+
+          Padding(
+            padding: EdgeInsets.all(20.0.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //-------------------------------- delete card ---------------
+                BulidCardAction(
+                  actionImg: 'assets/images/credit-card.png',
+                  actionName: 'Delete',
+                  onTap:
+                      () => confirmationDeleteDialog(
+                        onPressed: () {},
+                        context,
+                        text:
+                            'Once you delete this card it will be gone forever.',
                       ),
-                      SizedBox(height: 24.h),
-                      //----------------------------------- card item---------------
-                      CardItem(
-                        // isPinned: isPinned,
-                        bankLogo: 'assets/images/Group.svg',
-                        bankName: 'Aareal Bank AG ',
-                        serialNum: 'XXXXXXXXX236',
-                      ),
-                    ],
-                  ),
+                ),
+
+                //--------------------------------- pinned ----------------
+                BulidCardAction(
+                  onTap: () {},
+                  isPinned: true,
+                  actionImg: 'assets/images/pin.png',
+                  actionName: 'Pinned',
+                ),
+                //-------------------------- transactions ---------------------
+                BulidCardAction(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.cardTransactions);
+                  },
+                  actionImg: 'assets/images/online-banking.png',
+                  actionName: 'transactions',
                 ),
               ],
             ),
-
-            SizedBox(height: 40.h),
-
-            Padding(
-              padding: EdgeInsets.all(20.0.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //-------------------------------- delete card ---------------
-                  BulidCardAction(
-                    actionImg: 'assets/images/credit-card.png',
-                    actionName: 'Delete',
-                    onTap:
-                        () => confirmationDeleteDialog(
-                          onPressed: () {},
-                          context,
-                          text:
-                              'Once you delete this card it will be gone forever.',
-                        ),
-                  ),
-
-                  //--------------------------------- pinned ----------------
-                  BulidCardAction(
-                    onTap: () {},
-                    isPinned: true,
-                    actionImg: 'assets/images/pin.png',
-                    actionName: 'Pinned',
-                  ),
-                  //-------------------------- transactions ---------------------
-                  BulidCardAction(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.cardTransactions);
-                    },
-                    actionImg: 'assets/images/online-banking.png',
-                    actionName: 'transactions',
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

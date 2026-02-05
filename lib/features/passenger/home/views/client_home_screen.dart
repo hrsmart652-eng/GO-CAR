@@ -29,6 +29,12 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   int currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ClientProfileCubit>().getClientProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<ClientProfileCubit, ClientProfileState>(
       listener: (context, state) {

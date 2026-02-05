@@ -8,52 +8,50 @@ class NoHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
 
-        appBar: customAppBar(title: 'History'),
+      appBar: customAppBar(title: 'History'),
 
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/nohistory.png',
-                  width: 100.w,
-                  height: 100.h,
-                ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/nohistory.png',
+                width: 100.w,
+                height: 100.h,
+              ),
 
-                SizedBox(height: 30.h),
-                Text(
-                  'No data found,',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff475467),
-                  ),
+              SizedBox(height: 30.h),
+              Text(
+                'No data found,',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff475467),
                 ),
-                Text(
-                  'Go home and Complete your first',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff475467),
-                  ),
+              ),
+              Text(
+                'Go home and Complete your first',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff475467),
                 ),
-                Text(
-                  'ride',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff475467),
-                  ),
+              ),
+              Text(
+                'ride',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff475467),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

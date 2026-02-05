@@ -8,69 +8,67 @@ class ReviewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
 
-        appBar: customAppBar(title: 'Reviews'),
+      appBar: customAppBar(title: 'Reviews'),
 
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0.w),
 
-          child: Column(
-            children: [
-              SizedBox(height: 50.h),
-              //--------------------------- rating ---------------
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //----------------------- rate avg ------------
-                  Text(
-                    '4.4',
-                    style: TextStyle(
-                      fontSize: 64.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff121212),
-                    ),
+        child: Column(
+          children: [
+            SizedBox(height: 50.h),
+            //--------------------------- rating ---------------
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //----------------------- rate avg ------------
+                Text(
+                  '4.4',
+                  style: TextStyle(
+                    fontSize: 64.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
                   ),
-                  SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildWhichStarsIsColored(starsNum: 3, starSize: 32),
+                ),
+                SizedBox(width: 10.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildWhichStarsIsColored(starsNum: 3, starSize: 32),
 
-                      //----------------------- rate num ------------
-                      Text(
-                        '529 ratings',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff121212),
-                        ),
+                    //----------------------- rate num ------------
+                    Text(
+                      '529 ratings',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff121212),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
-              Divider(color: Color(0xff475467), thickness: 1, height: 20.h),
-              buildWhoIsRatingItem(
-                starNum: 3,
-                date: '4/4/2004 , 4:44 PM',
-                name: 'Hazem',
-              ),
-              buildWhoIsRatingItem(
-                starNum: 2,
-                date: '1/1/2011 , 1:11 PM',
-                name: 'Asmaa',
-              ),
-              buildWhoIsRatingItem(
-                starNum: 5,
-                date: '4/4/2004 , 4:44 PM',
-                name: 'Hazem',
-              ),
-            ],
-          ),
+            Divider(color: Color(0xff475467), thickness: 1, height: 20.h),
+            buildWhoIsRatingItem(
+              starNum: 3,
+              date: '4/4/2004 , 4:44 PM',
+              name: 'Hazem',
+            ),
+            buildWhoIsRatingItem(
+              starNum: 2,
+              date: '1/1/2011 , 1:11 PM',
+              name: 'Asmaa',
+            ),
+            buildWhoIsRatingItem(
+              starNum: 5,
+              date: '4/4/2004 , 4:44 PM',
+              name: 'Hazem',
+            ),
+          ],
         ),
       ),
     );

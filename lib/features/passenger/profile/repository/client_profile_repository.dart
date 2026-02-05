@@ -15,13 +15,17 @@ class ClientProfileRepository {
 
   Future<Either<String, ClientModel>> getClientProfile() async {
     try {
-      final id = CacheHelper().getData(key: ApiKeys.id);
-      if (id == null) {
-        return left("User not logged in");
-      }
-      final response = await Api.get(EndPoint.getClient(id));
+      // final id = CacheHelper().getData(key: ApiKeys.id);
+      // if (id == null) {
+      //   return left("User not logged in");
+      // }
+      // final response = await Api.get(EndPoint.getClient(id));
+      final response = await Api.get(
+        EndPoint.getClient(CacheHelper().getData(key: ApiKeys.id)),
+      );
 
-      return right(ClientModel.fromJson(response));
+      // return right(ClientModel.fromJson(response));
+      return right(ClientModel.fromJson(response["data"]));
     } on ServerException catch (e) {
       return left(e.errorModel.errorMessage);
     }
@@ -42,10 +46,10 @@ class ClientProfileRepository {
       final response = await Api.patch(
         EndPoint.clientProfileUpdate(clientId),
         data: {
-          // if (name != null) ApiKeys.name: name,
-          // if (phoneNumber != null) ApiKeys.phoneNumber: phoneNumber,
-          ApiKeys.name: name,
-          ApiKeys.phoneNumber: phoneNumber,
+          if (name != null) ApiKeys.name: name,
+          if (phoneNumber != null) ApiKeys.phoneNumber: phoneNumber,
+          // ApiKeys.name: name,
+          // ApiKeys.phoneNumber: phoneNumber,
         },
       );
 

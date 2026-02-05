@@ -9,60 +9,58 @@ class SupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
 
-        appBar: customAppBar(title: 'Support'),
+      appBar: customAppBar(title: 'Support'),
 
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 30.h),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 30.h),
 
-              Image.asset(
-                'assets/images/Group 76093.png',
-                width: 93.w,
-                height: 82.h,
-              ),
+            Image.asset(
+              'assets/images/Group 76093.png',
+              width: 93.w,
+              height: 82.h,
+            ),
 
-              SizedBox(height: 30.h),
-              SizedBox(
-                width: 168.w,
-                child: Center(
-                  child: Text(
-                    'Hello, how can we help you?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20.sp,
+            SizedBox(height: 30.h),
+            SizedBox(
+              width: 168.w,
+              child: Center(
+                child: Text(
+                  'Hello, how can we help you?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.sp,
 
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xff0D3244),
-                    ),
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff0D3244),
                   ),
                 ),
               ),
+            ),
 
-              SizedBox(height: 30.h),
+            SizedBox(height: 30.h),
 
-              buildSupportWayItem(
-                supportWayName: 'Call',
-                supportWayIcon: FontAwesomeIcons.phoneVolume,
-                supportWayDescription:
-                    'Select if you would like to talk to a representative.',
-              ),
+            buildSupportWayItem(
+              supportWayName: 'Call',
+              supportWayIcon: FontAwesomeIcons.phoneVolume,
+              supportWayDescription:
+                  'Select if you would like to talk to a representative.',
+            ),
 
-               buildSupportWayItem(
-                supportWayName: 'Email',
-                supportWayIcon: FontAwesomeIcons.at,
-                supportWayDescription:
-                   "Send us an email if you have any complaints.",
-              ),
+             buildSupportWayItem(
+              supportWayName: 'Email',
+              supportWayIcon: FontAwesomeIcons.at,
+              supportWayDescription:
+                 "Send us an email if you have any complaints.",
+            ),
 
-            ],
-          ),
+          ],
         ),
       ),
     );

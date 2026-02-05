@@ -24,7 +24,7 @@ class _AddCreditState extends State<AddCredit> {
     addCreditContainer(Image.asset("assets/images/visa1.png") , "Aareal Bank AG " , 4),
   ];
 
-    return SafeArea(child: Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
         padding:  EdgeInsets.only(left: 16.0.w, right: 16.0.w, top: 70.0.h),
@@ -55,13 +55,13 @@ class _AddCreditState extends State<AddCredit> {
                         btnName: "Choose",
                         onPressed: () {},
                       )
-           
+
 
 
           ],
         ),
       )
-    ));
+    );
 
   }
   Widget addCreditContainer(Image image , String text ,int index ){

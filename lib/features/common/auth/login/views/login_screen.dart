@@ -175,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-          SizedBox(height: 40.h),
+          SizedBox(height: 20.h),
 
           //------------------ welcome text ------------------
           Text(
@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 10.h),
 
           //------------------ forgot password ------------------
           Align(
@@ -275,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           //------------------ login button ------------------
-          SizedBox(height: 30.h),
+          SizedBox(height: 24.h),
           state is DriverSignInLoading || state is ClientLoginLoading
               ? const CircularProgressIndicator()
               : CustomElevatedBtn(
@@ -289,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
               await _saveLoginData(isDriverBloc);
             },
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 10.h),
 
           //------------------ dont have account ------------------
           Row(

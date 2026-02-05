@@ -47,7 +47,7 @@ class ClientLoginCubit extends Cubit<ClientLoginState> {
     }
   }
 
-  getClientProfile() {}
+  // getClientProfile() {}
 
   // void logout() async {
   //   user = null;

@@ -8,71 +8,69 @@ class PointsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xffFCFCFD),
+    return Scaffold(
+      backgroundColor: Color(0xffFCFCFD),
 
-        appBar: customAppBar(
-            title: 'Points'
-        ),
+      appBar: customAppBar(
+          title: 'Points'
+      ),
 
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/points_img_screen.png',
-                width: 285.14.w,
-                height: 188.h,
-                // height: 220.h,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/points_img_screen.png',
+              width: 285.14.w,
+              height: 188.h,
+              // height: 220.h,
+            ),
+
+            SizedBox(height: 50.h),
+            Text(
+              'Invite friend , Get 25 SEK',
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+                color: Color(0xff0D3244),
               ),
+            ),
 
-              SizedBox(height: 50.h),
-              Text(
-                'Invite friend , Get 25 SEK',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xff0D3244),
+            SizedBox(height: 16.h),
+            Text(
+              'If you invites another user You will have a prize added to your wallet, from which commissions will be deducted, which are non-withdrawable .',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+                color: Color(0xff344054),
+              ),
+            ),
+
+            SizedBox(height: 30.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildPointsContactWayItem(
+                  backgroundColor: Color(0xff266FFF),
+                  contactIcon: Icons.link,
+                  contactName: 'Copy code',
                 ),
-              ),
-
-              SizedBox(height: 16.h),
-              Text(
-                'If you invites another user You will have a prize added to your wallet, from which commissions will be deducted, which are non-withdrawable .',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff344054),
+                SizedBox(width: 16.w),
+                buildPointsContactWayItem(
+                  backgroundColor: Color(0xff25D366),
+                  contactIcon: FontAwesomeIcons.whatsapp,
+                  contactName: 'Whatsapp',
                 ),
-              ),
-
-              SizedBox(height: 30.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buildPointsContactWayItem(
-                    backgroundColor: Color(0xff266FFF),
-                    contactIcon: Icons.link,
-                    contactName: 'Copy code',
-                  ),
-                  SizedBox(width: 16.w),
-                  buildPointsContactWayItem(
-                    backgroundColor: Color(0xff25D366),
-                    contactIcon: FontAwesomeIcons.whatsapp,
-                    contactName: 'Whatsapp',
-                  ),
-                  SizedBox(width: 16.w),
-                  buildPointsContactWayItem(
-                    backgroundColor: Color(0xff475467),
-                    contactIcon: Icons.ios_share,
-                    contactName: 'Share',
-                  ),
-                ],
-              ),
-            ],
-          ),
+                SizedBox(width: 16.w),
+                buildPointsContactWayItem(
+                  backgroundColor: Color(0xff475467),
+                  contactIcon: Icons.ios_share,
+                  contactName: 'Share',
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
