@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
@@ -17,50 +15,24 @@ class ClientProfileCubit extends Cubit<ClientProfileState> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  // instance of cubit client
-  static ClientProfileCubit of(context) =>
-      BlocProvider.of<ClientProfileCubit>(context);
-
   final ClientProfileRepository profileRepository;
-
   ClientProfileCubit({required this.profileRepository})
-    : super(ClientProfileInitial()) {
-    nameController.text = clientModel?.fullName ?? "";
-    nameController.text = clientModel?.phoneNumber ?? "";
-    getClientProfile();
-  }
-
+    : super(ClientProfileInitial());
   ClientModel? clientModel;
   ClientLoginModel? user;
 
-  void loadCachedProfile() {
-    final cached = CacheHelper.sharedPreferences.getString('cached_profile');
-    if (cached != null) {
-      final model = ClientModel.fromJson(jsonDecode(cached));
-      emit(ClientProfileSuccess(clientModel: model));
-    }
-  }
-
-
   getClientProfile() async {
-    // retrun cached data
-    loadCachedProfile();
     emit(ClientProfileLoading());
     final response = await profileRepository.getClientProfile();
     response.fold(
       (errorMessage) => emit(ClientProfileFailure(errMessage: errorMessage)),
       (profileModel) {
-        //  clientModel = profileModel;
-        CacheHelper.sharedPreferences.setString('cached_profile',jsonEncode(profileModel.toJson()));
+        clientModel = profileModel;
         emit(ClientProfileSuccess(clientModel: profileModel));
       },
     );
   }
 
-  // dispose(){
-  //   nameController.dispose();
-  //   phoneController.dispose();
-  // }
   // Future<void> logout() async {
   //   user = null;
   //   await CacheHelper.sharedPreferences.clear();
