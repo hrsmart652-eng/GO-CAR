@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
@@ -14,69 +15,67 @@ import 'package:image_picker/image_picker.dart';
 import 'client_profile_state.dart';
 
 class ClientProfileCubit extends Cubit<ClientProfileState> {
+ // variables
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
-  // instance of cubit client
-  static ClientProfileCubit of(context) =>
-      BlocProvider.of<ClientProfileCubit>(context);
-
   final ClientProfileRepository profileRepository;
+  // instance from Client Cubit
+  static ClientProfileCubit of(context)=>BlocProvider.of(context);
+
 
   ClientProfileCubit({required this.profileRepository})
-    : super(ClientProfileInitial()) {
-    nameController.text = clientModel?.fullName ?? "";
-    nameController.text = clientModel?.phoneNumber ?? "";
+    : super(ClientProfileInitial()){
     getClientProfile();
   }
-
   ClientModel? clientModel;
-  ClientLoginModel? user;
 
-  void loadCachedProfile() {
-    final cached = CacheHelper.sharedPreferences.getString('cached_profile');
-    if (cached != null) {
-      final model = ClientModel.fromJson(jsonDecode(cached));
-      emit(ClientProfileSuccess(clientModel: model));
-    }
-  }
-
-
-  getClientProfile() async {
-    // retrun cached data
-    loadCachedProfile();
+  Future<void> getClientProfile() async {
     emit(ClientProfileLoading());
     final response = await profileRepository.getClientProfile();
+    debugPrint("====================Response Cubit: $response==========================");
+
     response.fold(
-      (errorMessage) => emit(ClientProfileFailure(errMessage: errorMessage)),
-      (profileModel) {
-        //  clientModel = profileModel;
-        CacheHelper.sharedPreferences.setString('cached_profile',jsonEncode(profileModel.toJson()));
+          (errorMessage) {
+        debugPrint(" Error: $errorMessage");
+        emit(ClientProfileFailure(errMessage: errorMessage));
+      },(profileModel) async {
+        clientModel = profileModel;
+        nameController.text = profileModel.fullName ?? "";
+        phoneController.text = profileModel.phoneNumber ?? "";
+
+        try {
+          await CacheHelper.sharedPreferences.setString(
+            'cached_profile',
+            jsonEncode(profileModel.toJson()),
+          );
+          debugPrint("Profile saved to cache");
+        } catch (e) {
+          debugPrint(" Error saving to cache: $e");
+        }
+
+        debugPrint("=====================Profile Data: ${profileModel.toJson()}==========================");
         emit(ClientProfileSuccess(clientModel: profileModel));
       },
     );
   }
 
-  // dispose(){
-  //   nameController.dispose();
-  //   phoneController.dispose();
-  // }
   // Future<void> logout() async {
   //   user = null;
   //   await CacheHelper.sharedPreferences.clear();
   //   emit(ClientProfileInitial());
   // }
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> clientLogout(BuildContext context) async {
     // clear token + id
     await CacheHelper.sharedPreferences.remove(ApiKeys.token);
     await CacheHelper.sharedPreferences.remove(ApiKeys.id);
+    // final loginCubit = context.read<DriverLoginCubit>();
+    nameController.clear();
+    phoneController.clear();
+    // loginCubit.signInEmail.clear();
+    // loginCubit.signInPassword.clear();
 
-    final loginCubit = context.read<DriverLoginCubit>();
-    loginCubit.signInEmail.clear();
-    loginCubit.signInPassword.clear();
 
-    Navigator.pushNamed(context, Routes.login);
   }
 
   clientProfileUpdate(String? name, String? phoneNumber) async {
@@ -87,18 +86,32 @@ class ClientProfileCubit extends Cubit<ClientProfileState> {
     );
     response.fold(
       (errorMessage) => emit(ClientProfileFailure(errMessage: errorMessage)),
-      (profileModel) => emit(ClientProfileSuccess(clientModel: profileModel)),
+      (profileModel) {
+        clientModel = profileModel;
+        nameController.text = profileModel.fullName ?? '';
+        phoneController.text = profileModel.phoneNumber ?? '';
+        CacheHelper.sharedPreferences.setString('cached_profile',jsonEncode(profileModel.toJson()),);
+        emit(ClientProfileSuccess(clientModel: profileModel));
+      }
     );
   }
 
-  setProfilePic(XFile image) async {
+  Future<void> setProfilePic(XFile image) async {
     emit(ClientProfileLoading());
-    final response = await profileRepository.changeProfilePic(
+
+    final result = await profileRepository.changeProfilePic(
       profilePicture: image,
     );
-    response.fold(
-      (errorMessage) => emit(ClientProfileFailure(errMessage: errorMessage)),
-      (profileModel) => emit(ClientProfileSuccess(clientModel: profileModel)),
+
+    result.fold(
+          (error) {
+        emit(ClientProfileFailure(errMessage: error.toString()));
+      },
+          (client) {
+            clientModel= client;
+        emit(ClientProfileSuccess(clientModel: client));
+      },
     );
   }
+
 }
