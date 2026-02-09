@@ -6,8 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
 import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/core/services/api/end_points.dart';
-import 'package:go_car/features/common/auth/login/cubit/driver_login_cubit.dart';
-import 'package:go_car/features/common/auth/login/models/client_login_model.dart';
 import 'package:go_car/features/passenger/profile/model/client_model.dart';
 import 'package:go_car/features/passenger/profile/repository/client_profile_repository.dart';
 import 'package:image_picker/image_picker.dart';

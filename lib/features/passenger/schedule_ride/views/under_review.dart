@@ -339,13 +339,12 @@ class UnderReview extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-
               Center(
                 child: TextButton(
                   onPressed: () {
                     confirmationDeleteDialog(
                       context,
-                      text: 'Once you delete this card it will be gone forever.', onPressed: (){},
+                      text: 'Once you delete this card it will be gone forever.', onPressed: ()async{},
                     );
                   },
                   child: Text(

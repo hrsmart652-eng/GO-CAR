@@ -133,6 +133,14 @@ class AppRouter {
       case Routes.profileScreen:
         return MaterialPageRoute(builder: (_)=>ProfileScreen());
 
+      case Routes.profileScreen:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => ClientProfileCubit(profileRepository: ClientProfileRepository(Api: DioConsumer(dio: Dio())))..getClientProfile(),
+            child: ProfileScreen(),
+          ),
+        );
+
       case Routes.noHistoryScreen:
         return MaterialPageRoute(builder: (_) => NoHistoryScreen());
 

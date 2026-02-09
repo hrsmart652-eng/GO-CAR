@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
 import 'package:go_car/core/services/api/api_consumer.dart';
 import 'package:go_car/core/services/api/end_points.dart';
@@ -15,53 +16,65 @@ class RequestRideRepository {
     required int luggageNo,
     required Map<String, dynamic> currentLocation,
     required Map<String, dynamic> destination,
-    required String? scheduledAt,
+    String? scheduledAt,
     required String paymentMethod,
   }) async {
     try {
       final response = await api.post(
-        isFormData: false,
         EndPoint.requestTrip,
+        isFormData: false,
         data: {
-          "userId": userId,
+          "client": userId,
           "carType": carType,
           "passengerNo": passengerNo,
           "luggageNo": luggageNo,
-          "currentLocation": {
-            "type": "Point",
-            "coordinates": [31.2357, 30.0444],
-          },
-          "destination": {
-            "type": "Point",
-            "coordinates": [32.2500, 31.0500],
-          },
+          "currentLocation": currentLocation,
+          "destination": destination,
           "scheduledAt": scheduledAt,
           "paymentMethod": paymentMethod,
         },
       );
-
-      CacheHelper().saveData(
-        key: ApiKeys.tripCode,
-        value: response['trip']['_id'],
+      final tripResponse=response["trip"];
+   //  ************************ // Save trip code*******************************
+      final tripCode = response['trip']['tripCode'].toString();
+      final tripId = response['trip']['_id'].toString();
+      final rideMsg=response["message"].toString();
+      await CacheHelper().saveData(
+        key: EndPoint.requestTrip,
+        value: tripId,
       );
-      print('Ride ID saved: ${CacheHelper().getData(key: ApiKeys.tripCode)}');
+      await CacheHelper().saveData(
+        key:ApiKeys.tripId,
+        value: tripId,
+      );
+      await CacheHelper().saveData(
+        key: ApiKeys.message,
+        value:rideMsg,
+      );
+      //************************************************************************
+      debugPrint('Trip Code saved: ${tripCode}');
+      debugPrint('Trip Response: ${tripResponse}');
 
-      final normalRideModel = NormalRideModel.fromJson(response);
-
-      return Right(normalRideModel);
-    } catch (error) {
-      return Left(error.toString());
+      NormalRideModel normalRide = NormalRideModel.fromJson(response);
+      TripModel trip = TripModel.fromJson(tripResponse);
+      debugPrint('Trip Model: ${trip.toJson()}');
+      return Right(normalRide);
+    } catch (e) {
+      debugPrint('Request Ride Error: $e');
+      return Left(e.toString());
     }
   }
 
-  Future<Either<String, void>> get cancelTrip async {
+
+  Future<Either<String, String>> cancelTrip({required String tripId}) async {
+    final tripId =CacheHelper().getData(key:ApiKeys.tripId);
     try {
       final response = await api.patch(
         isFormData: false,
-        EndPoint.cancelTrip(CacheHelper().getData(key: ApiKeys.tripCode)),
+        EndPoint.cancelTrip(tripId),
       );
 
-      return Right(response);
+      return Right(response.toString());
     } catch (error) {
       return Left(error.toString());
     }

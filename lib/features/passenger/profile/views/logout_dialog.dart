@@ -26,9 +26,7 @@ Future<dynamic> logoutDialog(BuildContext context) {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-           content:
-           //  create:(context)=>ClientProfileCubit(profileRepository: ClientProfileRepository(Api:DioConsumer(dio:Dio()))),
-              BlocBuilder<ClientProfileCubit,ClientProfileState>(
+           content:BlocBuilder<ClientProfileCubit,ClientProfileState>(
               builder: (context,state) {
                 final clientCubit =ClientProfileCubit.of(context);
                 return Column(

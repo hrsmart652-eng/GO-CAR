@@ -116,7 +116,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         BuildProfileAction(
           actionName: 'Logout',
           onTap: () {
-            logoutDialog(context);
+          //  logoutDialog(context);
+            Navigator.pushNamed(context,Routes.login);
            // context.read<DriverLoginCubit>().logout(context);
           },
         )

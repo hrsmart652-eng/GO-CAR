@@ -1,10 +1,12 @@
+import 'package:go_car/features/driver/profile/models/driver_model.dart';
+
 class NormalRideModel {
-  final bool success;
-  final String message;
-  final double price;
-  final double distanceKm;
-  final Map<String, dynamic> trip;
-  final String id;
+  final bool? success;
+  final String? message;
+  final double? price;
+  final double? distanceKm;
+  final TripModel trip; // trip model
+  final String? id;
 
   NormalRideModel({
     required this.success,
@@ -17,12 +19,86 @@ class NormalRideModel {
 
   factory NormalRideModel.fromJson(Map<String, dynamic> jsonData) {
     return NormalRideModel(
-      success: jsonData['success'],
-      message: jsonData['message'],
-      price: jsonData['price'],
-      distanceKm: jsonData['distanceKm'],
-      trip: jsonData['trip'],
-      id: jsonData['_id'],
+      success: jsonData['success']??false,
+      message: jsonData['message']??"",
+      price: jsonData['price']??0.0,
+      distanceKm: jsonData['distanceKm']??0.0,
+      trip:TripModel.fromJson(jsonData['trip']),
+      id: jsonData['_id']??"",
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'message': message,
+      'price': price,
+      'distanceKm': distanceKm,
+      'trip': trip.toJson(),
+      '_id': id,
+    };
+  }
+}
+
+class TripModel {
+  final String? id;
+  final String? client;
+  final String? carType;
+  final int? passengerNo;
+  final int? luggageNo;
+  final String? scheduledAt;
+  final double? price;
+ // final PaymentInfoModel paymentInfo;
+  final String? tripCode;
+  final String? status;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  TripModel({
+    required this.id,
+    required this.client,
+    required this.carType,
+    required this.passengerNo,
+    required this.luggageNo,
+    this.scheduledAt,
+    required this.price,
+   // required this.paymentInfo,
+    required this.tripCode,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory TripModel.fromJson(Map<String, dynamic> json) {
+    return TripModel(
+      id: json['_id']??"",
+      client: json['client']??"",
+      carType: json['carType']??"",
+      passengerNo: json['passengerNo']??1,
+      luggageNo: json['luggageNo']??0,
+      scheduledAt: json['scheduledAt']??"",
+      price: (json['price'] as num).toDouble()??0.0,
+      //   paymentInfo: PaymentInfoModel.fromJson(json['paymentInfo']),
+      tripCode: json['tripCode']??"",
+      status: json['status']??"",
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'client': client,
+      'carType': carType,
+      'passengerNo': passengerNo,
+      'luggageNo': luggageNo,
+      'scheduledAt': scheduledAt,
+      'price': price,
+     // 'paymentInfo': paymentInfo.toJson(),
+      'tripCode': tripCode,
+      'status': status,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
   }
 }

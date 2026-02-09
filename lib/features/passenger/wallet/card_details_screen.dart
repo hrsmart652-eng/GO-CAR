@@ -84,7 +84,7 @@ class CardDetailsScreen extends StatelessWidget {
                     actionName: 'Delete',
                     onTap:
                         () => confirmationDeleteDialog(
-                          onPressed: () {},
+                          onPressed: ()async {},
                           context,
                           text:
                               'Once you delete this card it will be gone forever.',

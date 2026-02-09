@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_car/features/passenger/schedule_ride/views/payment_screen.dart';
+import 'package:go_car/features/passenger/profile/widgets/custom_profile_text.dart';
 import 'package:go_car/features/passenger/schedule_ride/views/under_review.dart';
 import 'package:go_car/features/passenger/schedule_ride/views/widgets/schedule_ride.dart';
-import 'package:intl/intl.dart';
-import '../../../../core/widgets/custom_elevated_btn.dart';
 import '../../home/widgets/bottom_navigation_bar.dart';
 import 'accepted_ride_screen.dart';
 
@@ -37,26 +34,10 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Schedule your upcoming ride!",
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xff0D3244),
-                          ),
-                        ),
-
+                        CustomProfileText(text:"Schedule your upcoming ride!",color:const Color(0xff0D3244)),
                         SizedBox(height: 20.h),
-
                         // Upcoming rides
-                        Text(
-                          "Upcoming rides!",
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xff0D3244),
-                          ),
-                        ),
+                        CustomProfileText(text: "Upcoming rides!",color:const Color(0xff0D3244)),
 
                         SizedBox(height: 15),
                         RequestResponse(

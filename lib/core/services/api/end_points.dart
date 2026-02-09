@@ -118,6 +118,7 @@ class ApiKeys {
   static String totalReviews = "totalReviews";
   static String averageRating = "averageRating";
   static String tripCode = "tripCode";
+  static String tripId = "_id";
   static String review = "review";
   static String date = "date";
 }

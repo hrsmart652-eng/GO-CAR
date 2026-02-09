@@ -5,9 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomProfileText extends StatelessWidget {
   const CustomProfileText({
-    super.key,required this.text
+    super.key,required this.text,
+    this.color
   });
   final String text;
+  final Color? color;
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -15,7 +17,7 @@ class CustomProfileText extends StatelessWidget {
       style: TextStyle(
         fontSize: 18.sp,
         fontWeight: FontWeight.w700,
-        color: const Color(0xffFFFFFF),
+        color:color??const Color(0xffFFFFFF),
       ),
     );
   }

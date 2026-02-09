@@ -136,7 +136,7 @@ class _RatingState extends State<Rating> {
                       context,
                       text:
                       'You may don’t see this driver again between your recommendations ,and you  will not be able to change your mind after this message.',
-                      onPressed: () {
+                      onPressed: () async{
                         Navigator.pushNamed(context, Routes.home);
                       },
                     );

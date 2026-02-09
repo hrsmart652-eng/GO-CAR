@@ -3,52 +3,41 @@ import 'package:go_car/core/database/cache/cache_helper.dart';
 import 'package:go_car/core/services/api/api_consumer.dart';
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/passenger/normal_ride/model/normal_ride_model.dart';
+import 'package:go_car/features/passenger/schedule_ride/model/scheduled_ride_model.dart';
 
 class ScheduledRideRepository {
   final ApiConsumer api;
 
   ScheduledRideRepository({required this.api});
-  Future<Either<String, NormalRideModel>> requestRide({
-    required String userId,
-    required String carType,
-    required int passengerNo,
-    required int luggageNo,
-    required Map<String, dynamic> currentLocation,
-    required Map<String, dynamic> destination,
-    required String? scheduledAt,
-    required String paymentMethod,
+
+  Future<Either<String, ScheduledRideModel>> requestRide({
+    required ScheduledRideModel secheduledRideModel
+    // required String userId,
+    // required String carType,
+    // required int passengerNo,
+    // required int luggageNo,
+    // required Map<String, dynamic> currentLocation,
+    // required Map<String, dynamic> destination,
+    // required String? scheduledAt,
+    // required String paymentMethod,
   }) async {
     try {
+      ScheduledRideModel scheduledRideData=ScheduledRideModel.fromJson(secheduledRideModel.toJson());
       final response = await api.post(
         isFormData: false,
         EndPoint.requestTrip,
-        data: {
-          "userId": userId,
-          "carType": carType,
-          "passengerNo": passengerNo,
-          "luggageNo": luggageNo,
-          "currentLocation": {
-            "type": "Point",
-            "coordinates": [31.2357, 30.0444],
-          },
-          "destination": {
-            "type": "Point",
-            "coordinates": [32.2500, 31.0500],
-          },
-          "scheduledAt": scheduledAt,
-          "paymentMethod": paymentMethod,
-        },
+        data:scheduledRideData.toJson()
       );
 
       CacheHelper().saveData(
         key: ApiKeys.tripCode,
-        value: response['trip']['_id'],
+        value:response['trip']['_id'],
       );
       print('Ride ID saved: ${CacheHelper().getData(key: ApiKeys.tripCode)}');
 
-      final normalRideModel = NormalRideModel.fromJson(response);
-
-      return Right(normalRideModel);
+    //  final normalRideModel = NormalRideModel.fromJson(response);
+      // final RideModel = NormalRideModel.fromJson(response);
+      return Right(scheduledRideData);
     } catch (error) {
       return Left(error.toString());
     }
