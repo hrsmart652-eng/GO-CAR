@@ -6,7 +6,7 @@ import 'package:go_car/features/driver/profile/cubit/driver_profile_cubit.dart';
 import 'package:go_car/features/driver/profile/cubit/driver_profile_state.dart';
 import 'package:go_car/features/driver/profile/views/build_horizontal_list.dart';
 import 'package:go_car/features/driver/profile/views/build_profile_actions.dart';
-import 'package:go_car/features/passenger/profile/views/profile_screen.dart';
+import 'package:go_car/features/passenger/profile/views/profile_screen.dart' hide BuildHorizontalListItem, BuildProfileAction;
 import '../../../passenger/profile/views/logout_dialog.dart';
 import '../../home/views/widgets/driver_bottom_navigation_bar.dart';
 

@@ -1,54 +1,56 @@
-import 'package:dio/dio.dart';
+
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' show BlocProvider;
 import 'package:go_car/core/routing/routes.dart';
-import 'package:go_car/core/services/api/dio_consumer.dart';
-import 'package:go_car/features/common/auth/login/views/login_screen.dart';
-import 'package:go_car/features/driver/authentication/sign_up/views/driver_congratulations_screen.dart';
-import 'package:go_car/features/driver/authentication/sign_up/views/driver_sign_up_screen.dart';
-import 'package:go_car/features/driver/home/views/screens/congrats.dart';
-import 'package:go_car/features/driver/home/views/screens/driver_ride_screen.dart';
-import 'package:go_car/features/driver/home/views/screens/scheduled_ride_details.dart';
-import 'package:go_car/features/driver/onboarding/drive_onboarding_screen.dart';
-import 'package:go_car/features/driver/profile/views/driver_edit_profile_screen.dart';
-import 'package:go_car/features/driver/profile/views/driver_history.dart';
-import 'package:go_car/features/driver/profile/views/driver_reviews.dart';
-import 'package:go_car/features/driver/profile/views/driver_settings_screen.dart';
-import 'package:go_car/features/driver/wallet/driver_wallet.dart';
-import 'package:go_car/features/passenger/Wallet/card_details_screen.dart';
-import 'package:go_car/features/passenger/Wallet/card_transactions.dart';
-import 'package:go_car/features/passenger/Wallet/customer_cards_screen.dart';
-import 'package:go_car/features/passenger/Wallet/no_saved_card_screen.dart';
-import 'package:go_car/features/passenger/Wallet/ride_details.dart';
-import 'package:go_car/features/passenger/home/views/add_new_card.dart';
-import 'package:go_car/features/passenger/home/views/find_driver.dart';
-import 'package:go_car/features/passenger/home/views/payment_method.dart';
-import 'package:go_car/features/passenger/home/views/show_price.dart';
-import 'package:go_car/features/passenger/profile/cubit/client_profile_cubit.dart';
-import 'package:go_car/features/passenger/profile/repository/client_profile_repository.dart';
-import 'package:go_car/features/passenger/profile/views/edit_profile_screen.dart';
-import 'package:go_car/features/passenger/profile/views/history.dart';
-import 'package:go_car/features/passenger/profile/views/no_history_screen.dart';
-import 'package:go_car/features/passenger/profile/views/points_screen.dart';
-import 'package:go_car/features/passenger/profile/views/profile_screen.dart';
-import 'package:go_car/features/passenger/profile/views/reviews.dart';
-import 'package:go_car/features/passenger/profile/views/settings_screen.dart';
-import 'package:go_car/features/passenger/profile/views/support_screen.dart';
+import 'package:go_car/features/passenger/schedule_ride/views/payment_screen.dart';
+import 'package:go_car/features/passenger/schedule_ride/views/request_sent_screen.dart';
+import 'package:go_car/features/passenger/schedule_ride/views/widgets/see_less_schdule_transaction.dart';
 
 import '../../features/common/auth/forget_password/views/change_password.dart';
 import '../../features/common/auth/forget_password/views/forget_password.dart';
 import '../../features/common/auth/forget_password/views/forget_password_mobile_number.dart';
+import '../../features/common/auth/login/views/login_screen.dart';
 import '../../features/common/auth/sign_up/views/congratulations_screen.dart';
 import '../../features/common/auth/sign_up/views/phone_number_otp.dart';
 import '../../features/common/auth/sign_up/views/sign_up_screen.dart';
+import '../../features/driver/authentication/sign_up/views/driver_congratulations_screen.dart';
+import '../../features/driver/authentication/sign_up/views/driver_sign_up_screen.dart';
+import '../../features/driver/home/views/screens/congrats.dart';
 import '../../features/driver/home/views/screens/driver_home_screen.dart';
+import '../../features/driver/home/views/screens/driver_ride_screen.dart';
 import '../../features/driver/home/views/screens/notifications_screen.dart';
+import '../../features/driver/home/views/screens/scheduled_ride_details.dart';
+import '../../features/driver/onboarding/drive_onboarding_screen.dart';
+import '../../features/driver/profile/views/driver_edit_profile_screen.dart';
+import '../../features/driver/profile/views/driver_history.dart';
 import '../../features/driver/profile/views/driver_profile.dart';
+import '../../features/driver/profile/views/driver_reviews.dart';
+import '../../features/driver/profile/views/driver_settings_screen.dart';
+import '../../features/driver/wallet/driver_wallet.dart';
+import '../../features/passenger/Wallet/card_details_screen.dart';
+import '../../features/passenger/Wallet/card_transactions.dart';
+import '../../features/passenger/Wallet/customer_cards_screen.dart';
+import '../../features/passenger/Wallet/no_saved_card_screen.dart';
+import '../../features/passenger/Wallet/ride_details.dart';
+import '../../features/passenger/home/views/add_credit_screen.dart';
+import '../../features/passenger/home/views/add_new_card.dart';
 import '../../features/passenger/home/views/client_home_screen.dart';
+import '../../features/passenger/home/views/find_driver.dart';
+import '../../features/passenger/home/views/history.dart';
 import '../../features/passenger/home/views/notifications.dart';
+import '../../features/passenger/home/views/payment_method.dart';
 import '../../features/passenger/home/views/rating.dart';
 import '../../features/passenger/home/views/ride_ended.dart';
+import '../../features/passenger/home/views/show_price.dart';
+import '../../features/passenger/normal_ride/widgets/search_location.dart';
 import '../../features/passenger/onboarding/onboarding_screen.dart';
+import '../../features/passenger/profile/views/edit_profile_screen.dart';
+import '../../features/passenger/profile/views/no_history_screen.dart';
+import '../../features/passenger/profile/views/profile_screen.dart';
+import '../../features/passenger/profile/views/reviews.dart';
+import '../../features/passenger/profile/views/settings_screen.dart';
+import '../../features/passenger/profile/views/support_screen.dart';
 import '../../features/passenger/schedule_ride/views/passenger_schedule_ride.dart';
 
 class AppRouter {
@@ -127,11 +129,17 @@ class AppRouter {
       case Routes.scheduled:
         return MaterialPageRoute(builder: (_) => ScheduledRideDetails());
 
+      case Routes.schduleHome:
+        return MaterialPageRoute(builder: (_) => PassengerScheduleRide());
+
       case Routes.congrats:
         return MaterialPageRoute(builder: (_) => Congrats());
 
+      case Routes.requestSendScreen:
+        return MaterialPageRoute(builder: (_) =>RequestSentScreen());
+
       case Routes.profileScreen:
-        return MaterialPageRoute(builder: (_)=>ProfileScreen());
+        return MaterialPageRoute(builder: (_) => ProfileScreen());
 
       case Routes.noHistoryScreen:
         return MaterialPageRoute(builder: (_) => NoHistoryScreen());
@@ -161,8 +169,15 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => DriverSettingsScreen());
 
       case Routes.addNewCard:
-        return MaterialPageRoute(builder: (_) => AddNewCard());
-
+        final args = settings.arguments as Map<String, dynamic>?;
+        final VoidCallback? onPaymentChosen = args?['onPaymentChosen'] as VoidCallback?;
+        final bool isNormal = args?['isNormal'] as bool? ?? true;
+        return MaterialPageRoute(
+          builder: (_) => AddCredit(
+            onPaymentChosen: onPaymentChosen,
+            isNormalRide:isNormal,
+          ),
+        );
       case Routes.rating:
         return MaterialPageRoute(builder: (_) => Rating());
 
@@ -181,8 +196,13 @@ class AppRouter {
       case Routes.driverReviews:
         return MaterialPageRoute(builder: (_) => DriverReviews());
 
-      case Routes.paymentMethod:
-        return MaterialPageRoute(builder: (_) => PaymentMethod());
+      case Routes.normalPayment:
+        return MaterialPageRoute(builder: (_) => NormalPaymentScreen());
+
+      case Routes.schdulePayment:
+        return MaterialPageRoute(builder: (_) => SchdulePaymentScreen());
+      case Routes.seeLessSchduleTrans:
+        return MaterialPageRoute(builder: (_) => SeeLessSchduleTransaction());
 
       default:
         // Unknown route

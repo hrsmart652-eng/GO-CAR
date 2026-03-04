@@ -4,7 +4,9 @@ import 'package:go_car/core/database/cache/cache_helper.dart';
 import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/common/auth/login/cubit/driver_login_cubit.dart';
+import 'package:go_car/features/driver/profile/models/driver_model.dart';
 import 'package:go_car/features/driver/profile/repositories/driver_profile_repository.dart';
+import 'package:go_car/features/driver/profile/views/driver_profile.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'driver_profile_state.dart';
@@ -17,8 +19,12 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
 
   TextEditingController passwordController = TextEditingController();
 
+  DriverModel? driverModel;
   DriverProfileCubit(this.profileRepository) : super(DriverProfileInitial());
   final DriverProfileRepository profileRepository;
+
+  static DriverProfileCubit get(context) =>
+      BlocProvider.of<DriverProfileCubit>(context);
 
   getDriverProfile() async {
     emit(DriverProfileLoading());
@@ -26,7 +32,10 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
 
     response.fold(
       (errorMessage) => emit(DriverProfileFailure(errMessage: errorMessage)),
-      (profileModel) => emit(DriverProfileSuccess(driverProfile: profileModel)),
+      (profileModel){
+        driverModel =profileModel;
+        emit(DriverProfileSuccess(driverProfile: profileModel));
+        },
     );
   }
 

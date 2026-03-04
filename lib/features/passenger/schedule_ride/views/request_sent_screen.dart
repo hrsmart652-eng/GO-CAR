@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/features/passenger/schedule_ride/views/passenger_schedule_ride.dart';
 
 import '../../../../core/widgets/custom_elevated_btn.dart';
+import '../cubit/scheduled_ride_cubit.dart';
 
 
 class RequestSentScreen extends StatelessWidget {
@@ -40,12 +43,7 @@ class RequestSentScreen extends StatelessWidget {
             CustomElevatedBtn(
               btnName: 'OK',
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PassengerScheduleRide(),
-                  ),
-                );
+              Navigator.pushNamed(context,Routes.schduleHome);
               },
             ),
           ],

@@ -10,15 +10,16 @@ import 'package:go_car/features/common/auth/login/repository/client_login_reposi
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_cubit.dart';
 import 'package:go_car/features/passenger/normal_ride/repository/normal_ride_repo.dart';
 import 'package:go_car/features/passenger/profile/repository/client_profile_repository.dart';
+import 'package:go_car/features/passenger/schedule_ride/views/passenger_schedule_ride.dart';
 import '../config/app_config.dart';
 import '../config/environment.dart';
 import '../core/routing/app_routers.dart';
 import '../core/routing/routes.dart';
-import '../features/common/auth/login/cubit/driver_login_cubit.dart';
-import '../features/common/auth/login/repository/driver_login_repository.dart';
 import '../features/common/auth/sign_up/cubit/client_signup_cubit.dart';
 import '../features/common/auth/sign_up/repository/client_signup_repository.dart';
 import '../features/passenger/profile/cubit/client_profile_cubit.dart';
+import '../features/passenger/schedule_ride/cubit/scheduled_ride_cubit.dart';
+import '../features/passenger/schedule_ride/repository/scheduled_ride_repo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,8 +55,14 @@ void main() async {
           ),
         ),
         BlocProvider(
+          create:(context) =>ScheduledRideCubit(scheduledRideRepository:ScheduledRideRepository(api:DioConsumer(dio: Dio()),
+            ),
+          ),
+        ),
+
+        BlocProvider(
           create:
-              (context) => RequestRideCubit(
+              (context) => NormalRideCubit(
             requestRideRepository: RequestRideRepository(
               api: DioConsumer(dio: Dio()),
             ),
@@ -75,7 +82,6 @@ class PassengerApp extends StatelessWidget {
     return ScreenUtilInit(
       // designSize: const Size(375, 812),
       minTextAdapt: true,
-
       child: MaterialApp(
         title: 'Go Car',
         debugShowCheckedModeBanner: false,

@@ -46,7 +46,6 @@ class CustomTextField extends StatelessWidget {
             validator: validator,
             controller: controller,
             obscureText: isTextSecure,
-
             decoration: InputDecoration(
               fillColor: Colors.white,
               filled: true,

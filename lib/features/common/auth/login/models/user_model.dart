@@ -1,11 +1,11 @@
-class User {
+class UserModel {
   String? id;
   String? email;
   String? role;
 
-  User({this.id, this.email, this.role});
+  UserModel({this.id, this.email, this.role});
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
     id: json['id'] as String?,
     email: json['email'] as String?,
     role: json['role'] as String?,

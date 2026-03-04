@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class DriverModel {
   final String id;
   final String fullName;
@@ -7,7 +9,7 @@ class DriverModel {
   final String licenseImage;
   final dynamic image;
   final bool acceptCash;
-  final List<TripModel> trips; // ✅ strongly typed
+  final List<TripModel> trips;
 
   DriverModel({
     this.image,
@@ -36,6 +38,18 @@ class DriverModel {
               .toList(),
       image: json['image'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id':id,
+      'fullName':fullName,
+      'password':password,
+      'phoneNumber':phoneNumber,
+      'email':email,
+      'licenseImage':licenseImage,
+      'acceptCash':acceptCash
+    };
   }
 }
 

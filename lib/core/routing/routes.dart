@@ -59,5 +59,10 @@ class Routes {
   static const String reviewsScreen = '/ReviewsScreen';
   static const String supportScreen = '/supportScreen';
   static const String editProfileScreen = '/editProfileScreen';
-  static const String paymentMethod = '/paymentMethod';
+  static const String normalPayment = '/paymentMethod';
+  static const String schdulePayment = '/schdulePayment';
+  static const String searchLocationScreen = '/searchLocationScreen';
+  static const String schduleHome = '/schduleScreen';
+  static const String requestSendScreen = '/requestSendScreen';
+  static const String seeLessSchduleTrans = '/seeLessScheduleTrans';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_car/core/database/cache/cache_helper.dart';
+import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/common/auth/login/models/login_model.dart';
 import 'package:go_car/features/common/auth/login/repository/driver_login_repository.dart';
 
@@ -22,9 +24,13 @@ import 'driver_login_state.dart';
       email: signInEmail.text,
       password: signInPassword.text,
     );
+
     response.fold(
       (errorMessage) => emit(DriverSignInFailure(errMessage: errorMessage)),
-      (SignInModel) => emit(DriverSignInSuccess()),
+      (SignInModel){
+        CacheHelper().saveData(key:ApiKeys.driverId, value:SignInModel.user.id);
+        emit(DriverSignInSuccess());
+      }
     );
   }
 }

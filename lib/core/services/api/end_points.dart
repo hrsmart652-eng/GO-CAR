@@ -74,21 +74,40 @@ class EndPoint {
   static String driverReview(TripId) {
     return "review/add/$TripId";
   }
+  static String getAllDriver() {
+    return "driver/getAll";
+  }
 
   static String DriverReviews(id) {
     return "review/reviews/driver/$id";
   }
-
+  static String DriverRate(tripId) {
+    return "trip/$tripId/rate";
+  }
   // Client Api Endpoints
 
   static String signUpClient = "client/register";
+
   static String requestTrip = "trip";
+
   static String cancelTrip(id) {
     return "trip/$id/cancel";
   }
 
   static String getClient(id) {
     return "client/getClient/$id";
+  }
+
+  static String getAllTrips() {
+    return "driverTrip/allTrips";
+  }
+
+  static String getTrip(userId) {
+    return "trip?userId=${userId}&role=driver";
+  }
+
+  static String getNewTrip() {
+    return "driverTrip/newtrips";
   }
 }
 
@@ -104,6 +123,8 @@ class ApiKeys {
   static String email = "email";
   static String phoneNumber = "phoneNumber";
   static String id = "id";
+  static String clientId = "id";
+  static String driverId = "id";
   static String shiftId = "_id";
   static String rating = "rating";
   static String comment = "comment";
@@ -118,6 +139,8 @@ class ApiKeys {
   static String totalReviews = "totalReviews";
   static String averageRating = "averageRating";
   static String tripCode = "tripCode";
+  static String tripId = "_id";
   static String review = "review";
   static String date = "date";
+  static String allTSchdulerips = "allScheduleTrips";
 }

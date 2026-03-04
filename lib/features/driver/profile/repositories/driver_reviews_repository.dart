@@ -5,20 +5,23 @@ import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/core/services/errors/exceptions.dart';
 import 'package:go_car/features/driver/profile/models/driver_reviews_model.dart';
 
-class DriverReviewsRepository {
-  final ApiConsumer Api;
+class DriverReviewsRepository{
+  final ApiConsumer api;
 
-  DriverReviewsRepository({required this.Api});
+  DriverReviewsRepository({required this.api});
 
   Future<Either<String, DriverReviewsModel>> getDriverReviews() async {
     try {
-      final response = await Api.get(
-        EndPoint.DriverReviews(CacheHelper().getData(key: ApiKeys.id)),
-      );
+  String driverId=CacheHelper().getData(key: ApiKeys.driverId);
+      final response = await api.get(
+        EndPoint.DriverReviews(driverId));
 
-      return right(DriverReviewsModel.fromJson(response));
+  DriverReviewsModel review=DriverReviewsModel.fromJson(response);
+      return right(review);
     } on ServerException catch (e) {
       return left(e.errorModel.errorMessage);
+    }catch(err){
+      return left(err.toString());
     }
   }
 

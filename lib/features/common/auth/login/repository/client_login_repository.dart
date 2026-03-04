@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
 import 'package:go_car/core/services/api/api_consumer.dart';
 import 'package:go_car/core/services/api/dio_consumer.dart';
@@ -10,7 +11,7 @@ class ClientLoginRepository {
   final ApiConsumer api;
 
   ClientLoginRepository(DioConsumer dioConsumer, {required this.api});
-  Future<Either<String, ClientLoginModel>> loginIn({
+  Future<Either<String, UserLoginModel>> loginIn({
     required String email,
     required String password,
   }) async {
@@ -20,7 +21,8 @@ class ClientLoginRepository {
         EndPoint.signIn,
         data: {ApiKeys.email: email, ApiKeys.password: password},
       );
-      final clientLoginModel = ClientLoginModel.fromJson(response);
+      final clientLoginModel = UserLoginModel.fromJson(response);
+      debugPrint("Client Model ${clientLoginModel}");
       final decodedToken = JwtDecoder.decode(clientLoginModel.token);
       print('my Id is ${decodedToken['id']}');
       CacheHelper().saveData(key: ApiKeys.token, value: clientLoginModel.token);

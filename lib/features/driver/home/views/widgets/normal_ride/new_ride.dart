@@ -55,7 +55,7 @@ class _NewRideState extends State<NewRide> {
                       Container(
                         padding: EdgeInsets.all(20),
                         width: 343.w,
-                        height: 200.h,
+                        height: 210.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(8),
@@ -84,9 +84,7 @@ class _NewRideState extends State<NewRide> {
                                   ),
                                 ),
                                 Text(
-                                  state is NewTripSuccess
-                                      ? '${state.trips.elementAt(index).price} SEK'
-                                      : '0 SEK',
+                                  '${state.trips.elementAt(index).price} SEK',
                                   style: TextStyle(
                                     color: Color(0xff027A48),
 
@@ -221,6 +219,12 @@ class _NewRideState extends State<NewRide> {
                                     context.read<DriverRideCubit>().acceptRide(
                                       state.trips.elementAt(index).id,
                                     );
+                                    final tripCode =
+                                    CacheHelper().getData(key: ApiKeys.tripCode);
+                                    CacheHelper().saveData(
+                                      key: ApiKeys.tripId,
+                                      value: state.trips.elementAt(index).id,
+                                    );
                                     CacheHelper().saveData(
                                       key: ApiKeys.tripCode,
                                       value: state.trips.elementAt(index).id,
@@ -229,13 +233,8 @@ class _NewRideState extends State<NewRide> {
                                     //   key: 'index',
                                     //   value: index,
                                     // );
-                                    print(
-                                      // ignore: prefer_interpolation_to_compose_strings
-                                      'trip id came right ' +
-                                          CacheHelper().getData(
-                                            key: ApiKeys.tripCode,
-                                          ),
-                                    );
+
+                                    print('trip id came right ${tripCode ?? "No tripCode"}');
                                     Navigator.pushNamed(context, Routes.ride);
                                   },
                                   child: Text(

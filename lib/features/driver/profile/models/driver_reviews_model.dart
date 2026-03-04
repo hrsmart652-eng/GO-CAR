@@ -13,21 +13,22 @@ class DriverReviewsModel {
     return DriverReviewsModel(
       totalReviews: json['totalReviews'],
       averageRating: json['averageRating'],
-      reviews:
-          (json['reviews'] as List)
-              .map((item) => Review.fromJson(item))
-              .toList(),
+      reviews: (json['reviews'] as List)
+          .map((e) => Review.fromJson(e))
+          .toList(),
     );
   }
 }
 
 class Review {
+  final String clientName;
   final String tripCode;
   final int rating;
   final String review;
   final DateTime date;
 
   Review({
+    required this.clientName,
     required this.tripCode,
     required this.rating,
     required this.review,
@@ -36,6 +37,7 @@ class Review {
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
+      clientName: json['clientName'],
       tripCode: json['tripCode'],
       rating: json['rating'],
       review: json['review'],

@@ -15,7 +15,7 @@ class ClientLoginCubit extends Cubit<ClientLoginState> {
   GlobalKey<FormState> loginInFormKey = GlobalKey();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  ClientLoginModel? user;
+  UserLoginModel? user;
 
   logIn() async {
     emit(ClientLoginLoading());
@@ -31,17 +31,19 @@ class ClientLoginCubit extends Cubit<ClientLoginState> {
         },
         (clientLoginModel) {
           print('Login successful: ${clientLoginModel.token}');
+
           user = clientLoginModel;
-          CacheHelper().saveData(
-            key: ApiKeys.id,
-            value: clientLoginModel.user.id,
-          );
+         CacheHelper().saveData(key:ApiKeys.clientId, value:clientLoginModel.user.id);
+          // CacheHelper().saveData(
+          //   key: ApiKeys.id,
+          //   value: clientLoginModel.user.id,
+          // );
           emit(ClientLoginSuccess());
           // Navigate to home or other screen
         },
       );
     } catch (e) {
-      user = null;
+      print('Login User Id: ${user?.user.id}');
       emit(ClientLoginFailure(errMessage: 'An error occurred: $e'));
       print('Login error: $e');
     }

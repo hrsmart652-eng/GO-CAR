@@ -83,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'clientPassword',
           context.read<ClientLoginCubit>().passwordController.text,
         );
+
       }
     } else {
       await prefs.clear();
@@ -125,9 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Sign in Success')),
             );
-            context.read<ClientProfileCubit>().getClientProfile().then((
-                _,
-                ) {
+            context.read<ClientProfileCubit>().getClientProfile().then((_,) {
               Navigator.pushNamed(context, Routes.home);
             });
           } else if (state is ClientLoginFailure) {

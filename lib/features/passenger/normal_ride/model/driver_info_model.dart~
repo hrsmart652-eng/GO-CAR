@@ -1,0 +1,80 @@
+class DriverInfoModel {
+  final String id;
+  final String fullName;
+  final String phoneNumber;
+  final String email;
+  final String role;
+  final String companyNumber;
+  final String invitationCode;
+  final String licenseImage;
+  final String status;
+  final bool acceptCash;
+  final List<dynamic> trips;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String image;
+  final String isApproved;
+
+  DriverInfoModel({
+    required this.id,
+    this.fullName = "",
+    required this.phoneNumber,
+    this.email = "",
+    this.role = "driver",
+    this.companyNumber = "",
+    this.invitationCode = "",
+    this.licenseImage = "",
+    this.status = "offline",
+    this.acceptCash = false,
+    this.trips = const [],
+    this.createdAt,
+    this.updatedAt,
+    this.image = "",
+    this.isApproved = "pending",
+  });
+
+  factory DriverInfoModel.fromJson(Map<String, dynamic> json) {
+    return DriverInfoModel(
+      id: json['_id']?.toString() ?? "",
+      fullName: json['fullName']?.toString() ?? "",
+      phoneNumber: json['phoneNumber']?.toString() ?? "",
+      email: json['email']?.toString() ?? "",
+      role: json['role']?.toString() ?? "driver",
+      companyNumber: json['companyNumber']?.toString() ?? "",
+      invitationCode: json['invitationCode']?.toString() ?? "",
+      licenseImage: json['licenseImage']?.toString() ?? "",
+      status: json['status']?.toString() ?? "offline",
+      acceptCash: json['acceptCash'] ?? false,
+      trips: json['trips'] != null ? List.from(json['trips']) : [],
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
+      image: json['image']?.toString() ?? "",
+      isApproved: json['isApproved']?.toString() ?? "pending",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'fullName': fullName,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'role': role,
+      'companyNumber': companyNumber,
+      'invitationCode': invitationCode,
+      'licenseImage': licenseImage,
+      'status': status,
+      'acceptCash': acceptCash,
+      'trips': trips,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'image': image,
+      'isApproved': isApproved,
+    };
+  }
+
+}

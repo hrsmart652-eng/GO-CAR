@@ -4,14 +4,17 @@ import 'package:go_car/core/services/api/api_consumer.dart';
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/core/services/errors/exceptions.dart';
 import 'package:go_car/features/common/auth/login/models/login_model.dart';
+import 'package:go_car/features/common/auth/login/models/user_model.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+
+import '../models/client_login_model.dart';
 
 class DriverLoginRepository {
   final ApiConsumer api;
 
   DriverLoginRepository(this.api);
 
-  Future<Either<String, LoginModel>> signIn({
+  Future<Either<String, UserLoginModel>> signIn({
     required String email,
     required String password,
   }) async {
@@ -22,14 +25,14 @@ class DriverLoginRepository {
       );
       CacheHelper().saveData(key: ApiKeys.password, value: password);
 
-      final driver = LoginModel.fromJson(response);
+      final driver = UserLoginModel.fromJson(response);
       final decodedToken = JwtDecoder.decode(driver.token);
       print('my Id is ${decodedToken['id']}');
       print('my password is ${CacheHelper().getData(key: ApiKeys.password)}');
 
       CacheHelper().saveData(key: ApiKeys.token, value: driver.token);
       CacheHelper().saveData(key: ApiKeys.id, value: decodedToken[ApiKeys.id]);
-
+      CacheHelper().saveData(key: ApiKeys.driverId, value: decodedToken[ApiKeys.driverId]);
       return right(driver);
     } on ServerException catch (e) {
       return left(e.errorModel.errorMessage);

@@ -13,7 +13,6 @@ final class DriverRideModel {
     required this.status,
     required this.driverId,
     required this.passengerId,
-
     required this.createdAt,
     required this.updatedAt,
   });

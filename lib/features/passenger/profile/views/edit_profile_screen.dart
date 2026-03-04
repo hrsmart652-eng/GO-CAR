@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/core/widgets/custom_elevated_btn.dart';
 import 'package:go_car/features/passenger/profile/cubit/client_profile_cubit.dart';
 import 'package:go_car/features/passenger/profile/cubit/client_profile_state.dart';
-import 'package:go_car/features/passenger/profile/widgets/custom_edit_profile_body.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl_phone_field/country_picker_dialog.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../widgets/custom_edit_profile_image.dart';
+import '../widgets/custom_edit_profile_phone.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -20,60 +18,71 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // late StreamSubscription<ClientProfileState> _profileStateSubscription;
   late ClientProfileCubit clientProfileCubit;
-
-  // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController phoneController = TextEditingController();
-  // String? completePhoneNumber;
-
-  // @override
-  // void dispose() {
-  //   _profileStateSubscription.cancel();
-  //   super.dispose();
-  // }
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    clientProfileCubit = context.read<ClientProfileCubit>();
-      clientProfileCubit.getClientProfile();
+  void initState() {
+    super.initState();
+    clientProfileCubit = ClientProfileCubit.of(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ClientProfileCubit, ClientProfileState>(
       listener: (context, state) {
         if (state is ClientProfileFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errMessage)),
-          );
-        }
-
-        if (state is ClientProfileSuccess) {
-          clientProfileCubit.nameController.text = state.clientModel.fullName ?? '';
-          clientProfileCubit.phoneController.text = state.clientModel.phoneNumber ?? '';
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully'))
-
-
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errMessage)));
+        } else if (state is ClientProfileLoading) {
+            Center(child: CircularProgressIndicator(color: Colors.red));
         }
       },
-      builder: (context, state) {
-        final cubit = context.read<ClientProfileCubit>();
+      builder: (context, state){
+        if( state is ClientProfileSuccess){
+         return Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Color(0xffFCFCFD),
+            appBar: customAppBar(title: 'Edit Profile'),
+            body: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 30.h),
+                  CustomEditProfileImage(clientProfileCubit: clientProfileCubit,clientModel:state.clientModel),
 
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: const Color(0xffFCFCFD),
-          appBar: customAppBar(title: 'Edit Profile'),
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: CustomEditProfileBody(state, cubit,context),
-          ),
-        );
+                  SizedBox(height: 30.h),
+
+                  CustomTextField(
+                    fieldTitle: 'Full name',
+                    // controller: nameController,
+                    controller: clientProfileCubit.nameController,
+                  ),
+
+                  CustomEditProfilePhone(clientProfileCubit: clientProfileCubit),
+                  SizedBox(height: 170.h),
+                  CustomElevatedBtn(
+                    btnName: 'Update',
+                    onPressed: () {
+                      clientProfileCubit.clientProfileUpdate(
+                        clientProfileCubit.nameController.text,
+                        clientProfileCubit.phoneController.text,
+                      );
+                      Navigator.pushNamed(context,Routes.profileScreen);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        }else if(state is ClientProfileFailure){
+          return  Container(child: Text('no Data', style: TextStyle(fontSize: 20),),
+            color: Colors.red,);
+        }
+        return const SizedBox();
       },
     );
   }
-
-
 }
+
+

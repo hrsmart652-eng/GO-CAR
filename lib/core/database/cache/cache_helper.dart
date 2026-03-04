@@ -14,7 +14,7 @@ class CacheHelper {
 
   //! this method to put data in local database using key
 
-  Future<bool> saveData({required String key, required dynamic value}) async {
+  Future<dynamic> saveData({required String key, required dynamic value}) async {
     if (value is bool) {
       return await sharedPreferences.setBool(key, value);
     }

@@ -41,7 +41,7 @@ class CancelCard extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF9FAFB),
@@ -62,8 +62,9 @@ class CancelCard extends StatelessWidget {
 
                 ElevatedButton(
                   onPressed: () {
-                    // Navigator.pushNamed(context, Routes.home);
-                    Navigator.pushNamed(context, Routes.findDriver);
+
+                    
+                    Navigator.pushNamed(context, Routes.home);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFD90F00),

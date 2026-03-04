@@ -14,6 +14,8 @@ import 'package:go_car/features/driver/home/views/widgets/scheduled_ride/schedul
 import 'package:go_car/features/driver/profile/cubit/driver_profile_cubit.dart';
 import 'package:go_car/features/driver/profile/cubit/driver_profile_state.dart';
 
+import '../../../../../config/environment.dart';
+
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen(this.online, {super.key});
   final bool online;
@@ -61,336 +63,336 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     return BlocConsumer<DriverProfileCubit, DriverProfileState>(
       listener:
           (context, state) => {
-            if (state is DriverProfileFailure)
-              {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.errMessage))),
-              },
+        if (state is DriverProfileFailure)
+          {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errMessage))),
           },
+      },
       builder: (context, state) {
         return state is DriverProfileLoading
             ? Center(child: CircularProgressIndicator())
-            : state is DriverProfileSuccess
-            ?
+            :
+        state is DriverProfileSuccess ?
         Scaffold(
-              backgroundColor: Color(0xffFCFCFD),
-              body: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Column(
-                    children: [
-                      DriverAppBar(Name: state.driverProfile.fullName),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Container(
-                          height: 44.h,
-                          decoration: BoxDecoration(color: Color(0xffFEFBDA)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+          backgroundColor: Color(0xffFCFCFD),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Column(
+                children: [
+                  DriverAppBar(Name: state.driverProfile.fullName),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Container(
+                      height: 44.h,
+                      decoration: BoxDecoration(color: Color(0xffFEFBDA)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Offline',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF344054),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            child: Container(
+                              width: 50.w,
+                              height: 24.h,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors:
+                                  online ? activeGrad : unactiveGrad,
+                                ),
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: FlutterSwitch(
+                                value: online,
+                                onToggle: (val) {
+                                  setState(() {
+                                    online = val;
+                                    if (online) {
+                                      // Start shift
+                                      // context
+                                      //     .read<DriverShiftCubit>()
+                                      //     .beOnline();
+                                      context
+                                          .read<DriverShiftCubit>()
+                                          .startShift(
+                                        carType: CacheHelper().getData(
+                                          key: ApiKeys.carType,
+                                        ),
+                                      );
+                                    } else {
+                                      // End shift
+                                      // context
+                                      //     .read<DriverShiftCubit>()
+                                      //     .beOffline();
+                                      context
+                                          .read<DriverShiftCubit>()
+                                          .endShift();
+                                    }
+                                  });
+                                },
+                                activeColor: Colors.transparent,
+                                inactiveColor: Colors.transparent,
+                                toggleColor: Colors.white,
+                                width: 50.w,
+                                height: 24.h,
+                                activeSwitchBorder: Border.all(
+                                  color: Colors.transparent,
+                                ),
+                                inactiveSwitchBorder: Border.all(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'Online',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 52, 64, 84),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Accept cash',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff121212),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                checkbox
+                                    ? context
+                                    .read<DriverShiftCubit>()
+                                    .acceptCash()
+                                    : context
+                                    .read<DriverShiftCubit>()
+                                    .refuseCash();
+                                setState(() {
+                                  checkbox = !checkbox;
+                                });
+                              },
+                              icon:
+                              checkbox
+                                  ? Icon(
+                                color: Color.fromARGB(
+                                  255,
+                                  165,
+                                  165,
+                                  165,
+                                ),
+                                Icons.check_box_outline_blank,
+                              )
+                                  : Icon(
+                                color: Color(0xff266FFF),
+                                Icons.check_box_outlined,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          width: 434.w,
+                          height: 110.h,
+                          child: Stack(
                             children: [
-                              Text(
-                                'Offline',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF344054),
+                              Positioned(
+                                top: -1,
+                                left: 10,
+                                child: Container(
+                                  height: 43.h,
+                                  width: 24.w,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffEAECF0),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/images/pro.png',
+                                    width: 26.w,
+                                    height: 26.w,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
+                                  horizontal: 20,
                                 ),
-                                child: Container(
-                                  width: 50.w,
-                                  height: 24.h,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors:
-                                          online ? activeGrad : unactiveGrad,
-                                    ),
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  child: FlutterSwitch(
-                                    value: online,
-                                    onToggle: (val) {
-                                      setState(() {
-                                        online = val;
-                                        if (online) {
-                                          // Start shift
-                                          // context
-                                          //     .read<DriverShiftCubit>()
-                                          //     .beOnline();
-                                          context
-                                              .read<DriverShiftCubit>()
-                                              .startShift(
-                                                carType: CacheHelper().getData(
-                                                  key: ApiKeys.carType,
-                                                ),
-                                              );
-                                        } else {
-                                          // End shift
-                                          // context
-                                          //     .read<DriverShiftCubit>()
-                                          //     .beOffline();
-                                          context
-                                              .read<DriverShiftCubit>()
-                                              .endShift();
-                                        }
-                                      });
-                                    },
-                                    activeColor: Colors.transparent,
-                                    inactiveColor: Colors.transparent,
-                                    toggleColor: Colors.white,
-                                    width: 50.w,
-                                    height: 24.h,
-                                    activeSwitchBorder: Border.all(
-                                      color: Colors.transparent,
-                                    ),
-                                    inactiveSwitchBorder: Border.all(
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'Online',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color.fromARGB(255, 52, 64, 84),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Accept cash',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xff121212),
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    checkbox
-                                        ? context
-                                            .read<DriverShiftCubit>()
-                                            .acceptCash()
-                                        : context
-                                            .read<DriverShiftCubit>()
-                                            .refuseCash();
-                                    setState(() {
-                                      checkbox = !checkbox;
-                                    });
-                                  },
-                                  icon:
-                                      checkbox
-                                          ? Icon(
-                                            color: Color.fromARGB(
-                                              255,
-                                              165,
-                                              165,
-                                              165,
-                                            ),
-                                            Icons.check_box_outline_blank,
-                                          )
-                                          : Icon(
-                                            color: Color(0xff266FFF),
-                                            Icons.check_box_outlined,
-                                          ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                              ),
-                              width: 434.w,
-                              height: 110.h,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    top: -1,
-                                    left: 10,
-                                    child: Container(
-                                      height: 43.h,
-                                      width: 24.w,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xffEAECF0),
-                                      ),
-                                      child: Image.asset(
-                                        'assets/images/pro.png',
-                                        width: 26.w,
-                                        height: 26.w,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
-                                    child: Column(
+                                child: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        Row(
+                                        Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment
+                                              .spaceBetween,
                                           children: [
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Remaining Time',
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10.h),
-                                                Text(
-                                                  '12:00:00',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: 1.w,
-                                              height: 40.h, // Adjust as needed
-                                              color:
-                                                  Colors
-                                                      .grey[300], // Or any color you prefer
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 12,
+                                            Text(
+                                              'Remaining Time',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  'Trips',
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10.h),
-                                                Text(
-                                                  '1200',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: 1.w,
-                                              height: 40.h, // Adjust as needed
-                                              color: Colors.grey[300],
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 12,
+                                            SizedBox(height: 10.h),
+                                            Text(
+                                              '12:00:00',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  'Km',
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10.h),
-                                                Text(
-                                                  '12K',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
                                             ),
                                           ],
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
+                                        Container(
+                                          width: 1.w,
+                                          height: 40.h, // Adjust as needed
+                                          color:
+                                          Colors
+                                              .grey[300], // Or any color you prefer
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                        ),
+                                        Column(
                                           children: [
                                             Text(
-                                              'Today\'s Total',
+                                              'Trips',
                                               style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
+                                            SizedBox(height: 10.h),
                                             Text(
-                                              '5000 SEK',
+                                              '1200',
                                               style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 1.w,
+                                          height: 40.h, // Adjust as needed
+                                          color: Colors.grey[300],
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Km',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10.h),
+                                            Text(
+                                              '12K',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text(
+                                          'Today\'s Total',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        Text(
+                                          '5000 SEK',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            RideType(
-                              onIndexChanged: (index) {
-                                setState(() {
-                                  currentIndex = index;
-                                });
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child:
-                              currentIndex == 0
-                                  ? NormalRide()
-                                  : ScheduledRide(),
+                        RideTypeScreen(
+                          onIndexChanged: (index) {
+                            setState(() {
+                              currentIndex = index;
+                            });
+                          },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child:
+                      currentIndex == 0
+                          ? NormalRide()
+                          : ScheduledRide(),
+                    ),
+                  ),
+                ],
               ),
-              bottomNavigationBar: const DriverNavigationBarWidget(
-                currentIndex: 0,
-              ),
-            )
+            ),
+          ),
+          bottomNavigationBar: const DriverNavigationBarWidget(
+            currentIndex: 0,
+          ),
+        )
             : Scaffold(
-              backgroundColor: Colors.white,
-              body: Center(child: Text("Please Sign Up")),
-            );
+          backgroundColor: Colors.white,
+          body: Center(child: Text("Please Sign Up")),
+        );
       },
     );
   }

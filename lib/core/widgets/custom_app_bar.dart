@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-PreferredSizeWidget customAppBar({ required String title,  }) => AppBar(
+PreferredSizeWidget customAppBar({ required String title,bool isBack=false}) => AppBar(
+    automaticallyImplyLeading:isBack,
   backgroundColor: Color(0xffFCFCFD),
   centerTitle: true,
   title: Text(

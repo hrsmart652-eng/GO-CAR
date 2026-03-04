@@ -20,7 +20,12 @@ class DriverRideCubit extends Cubit<DriverRideState> {
 
     response.fold(
       (errorMessage) => emit(DriverRideFailure(errMessage: errorMessage)),
-      (DriverRideModel) => emit(DriverRideSuccess()),
+      (driverRideModel){
+        CacheHelper().saveData(
+          key: ApiKeys.driverId,
+          value:driverRideModel.driverId
+        );
+        emit(DriverRideSuccess());},
     );
   }
 

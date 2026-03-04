@@ -66,7 +66,7 @@ void main() async {
         BlocProvider(
           create:
               (context) => DriverReviewsCubit(
-                DriverReviewsRepository(Api: DioConsumer(dio: Dio())),
+                DriverReviewsRepository(api: DioConsumer(dio: Dio())),
               ),
         ),
         BlocProvider(

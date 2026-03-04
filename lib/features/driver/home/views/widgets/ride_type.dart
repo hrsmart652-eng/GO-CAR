@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class RideType extends StatefulWidget {
+class RideTypeScreen extends StatefulWidget {
   final Function(int) onIndexChanged;
-  const RideType({super.key, required this.onIndexChanged});
+  const RideTypeScreen({super.key, required this.onIndexChanged});
 
   @override
-  State<RideType> createState() => _RideTypeState();
+  State<RideTypeScreen> createState() => _RideTypeState();
 }
 
-class _RideTypeState extends State<RideType> {
+class _RideTypeState extends State<RideTypeScreen> {
   int _selectedIndex = 0;
 
   @override

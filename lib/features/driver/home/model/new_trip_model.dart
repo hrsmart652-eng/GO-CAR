@@ -32,13 +32,13 @@ final class NewTripModel {
       paymentStatus: json['paymentInfo']['status'].toString(),
       method: json['paymentInfo']['method'].toString(),
       client:
-          json['client'] == null
-              ? []
-              : (json['client'] is List
-                  ? (json['client'] as List)
-                      .map((item) => Client.fromJson(item))
-                      .toList()
-                  : [Client.fromJson(json['client'])]),
+      json['client'] == null
+          ? []
+          : (json['client'] is List
+          ? (json['client'] as List)
+          .map((item) => Client.fromJson(item))
+          .toList()
+          : [Client.fromJson(json['client'])]),
     );
   }
 }
@@ -67,4 +67,14 @@ class Client {
       image: json['image'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id':id,
+      'fullName':name,
+      'email':email,
+      'phoneNumber':phone,
+      'image':image
+    };
+}
 }

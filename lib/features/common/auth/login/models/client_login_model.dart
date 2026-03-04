@@ -1,16 +1,16 @@
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/common/auth/login/models/user_model.dart';
 
-class ClientLoginModel {
+class UserLoginModel {
   final String token;
-  final User user;
+  final UserModel user;
 
-  ClientLoginModel({required this.token, required this.user});
+  UserLoginModel({required this.token, required this.user});
 
-  factory ClientLoginModel.fromJson(Map<String, dynamic> JsonData) {
-    return ClientLoginModel(
+  factory UserLoginModel.fromJson(Map<String, dynamic> JsonData) {
+    return UserLoginModel(
       token: JsonData[ApiKeys.token],
-      user: User.fromJson(JsonData[ApiKeys.user]),
+      user: UserModel.fromJson(JsonData[ApiKeys.user]),
     );
   }
 }

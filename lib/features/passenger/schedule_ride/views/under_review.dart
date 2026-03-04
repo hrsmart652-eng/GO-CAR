@@ -1,201 +1,304 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_car/features/passenger/schedule_ride/cubit/scheduled_ride_cubit.dart';
 
 import '../../../../core/widgets/confirmation_delete_dialog.dart';
+import '../../home/widgets/custom_find_driver_text.dart';
+import '../cubit/scheduled_ride_state.dart';
 
-class UnderReview extends StatelessWidget {
+
+class UnderReview extends StatelessWidget{
   const UnderReview({super.key});
 
   @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final cubit = ScheduledRideCubit.get(context);
+  //     cubit.getRequestNewTrips();
+  //   });
+  // }
+
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          title: Text('Request under review'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //--------------------------- 1. map Image ---------------------------
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0.w),
+    return BlocConsumer<ScheduledRideCubit, ScheduledRideState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        final schduleCubit = ScheduledRideCubit.get(context);
+        final trip =state is SchduledTripSuccessState?state.tripAccepted:schduleCubit.foundNewTrip;
+        double price =double.parse(schduleCubit.scheduledRideResponse?.price!.toStringAsFixed(2)??'0.0');
+       // double distance =double.parse(schduleCubit.scheduledRideResponse.!.substring(0));
+        final newTrip=state is ScheduledRideSuccess?state.scheduledRideResponse:schduleCubit.foundNewTrip;
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              leading:IconButton(onPressed:(){
+               // schduleCubit.getAllNewTrips();
+                Navigator.pop(context);
+              }, icon:Icon(Icons.arrow_back)),
+              centerTitle: true,
+              title: Text('Request under review'),
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //--------------------------- 1. map Image ---------------------------
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.0.w),
 
-                child: Image.asset(
-                  'assets/images/rectangle.png',
-                  width: double.infinity,
-                  height: 200.h,
-                  fit: BoxFit.cover,
-                ),
-              ),
+                    child: Image.asset(
+                      'assets/images/rectangle.png',
+                      width: double.infinity,
+                      height: 200.h,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
 
-              SizedBox(height: 24.h),
+                  SizedBox(height: 24.h),
 
-              // ----------------------3- Row with date, time, and two icons
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color: Color(0xffFCFCFD),
-                  border: Border.all(color: Color(0xffEAECF0), width: 1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Row(
-                  //---------------- Column with date and time ---------------
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  // ----------------------3- Row with date, time, and two icons
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16.w),
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: Color(0xffFCFCFD),
+                      border: Border.all(color: Color(0xffEAECF0), width: 1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Row(
+                      //---------------- Column with date and time ---------------
                       children: [
-                        Text(
-                          '4 / 4/ 2004',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff0D3244),
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${schduleCubit.pickupDateTime?.toIso8601String()}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff0D3244),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Text(
+                              '${(schduleCubit.dateFormat.format(schduleCubit.pickupDateTime!))}',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff344054),
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          '10:00 AM',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff344054),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    // -----------------------  2 Icons
-                    Container(
-                      padding: EdgeInsets.all(4.w),
-                      decoration: BoxDecoration(
-                        color: Color(0xffEAECF0),
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.car_crash,
-                            color: Color(0xff121212),
-                            size: 20.sp,
-                          ),
-                          Icon(
-                            Icons.arrow_forward_sharp,
-                            color: Color(0xff121212),
-                            size: 20.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-
-              //------------------------
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(255, 207, 199, 199),
-                      blurRadius: 8,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    //------------------ circles and desaed lines -----------------
-                    Column(
-                      children: [
+                        Spacer(),
+                        // -----------------------  2 Icons
                         Container(
-                          width: 8.w,
-                          height: 8.h,
+                          padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: Color(0xff5F00FB),
-                            shape: BoxShape.circle,
+                            color: Color(0xffEAECF0),
+                            borderRadius: BorderRadius.circular(4.r),
                           ),
-                        ),
-
-                        SizedBox(
-                          height: 30.h, // الطول الإجمالي باستخدام
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(
-                              // حساب عدد الشرطات بناءً على الطول
-                              ((20) / (3 + 2)).floor(),
-                              (index) => Container(
-                                width:
-                                    1.0.w, // عرض الشرطة (يمكن زيادته إذا أردت خطًا أعرض)
-                                height: 3.h, // ارتفاع الشرطة
-                                color: Color(0xff121212), // لون الشرطة
+                            children: [
+                              Icon(
+                                Icons.car_crash,
+                                color: Color(0xff121212),
+                                size: 20.sp,
                               ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 8.w,
-                          height: 8.h,
-                          decoration: BoxDecoration(
-                            color: Color(0xff60BF95),
-                            shape: BoxShape.circle,
+                              Icon(
+                                Icons.arrow_forward_sharp,
+                                color: Color(0xff121212),
+                                size: 20.sp,
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(width: 16),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  SizedBox(height: 16),
+
+                  //------------------------
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 207, 199, 199),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
                       children: [
+                        //------------------ circles and desaed lines -----------------
                         Column(
+                          children: [
+                            Container(
+                              width: 8.w,
+                              height: 8.h,
+                              decoration: BoxDecoration(
+                                color: Color(0xff5F00FB),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+
+                            SizedBox(
+                              height: 30.h, // الطول الإجمالي باستخدام
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: List.generate(
+                                  // حساب عدد الشرطات بناءً على الطول
+                                  ((20) / (3 + 2)).floor(),
+                                  (index) => Container(
+                                    width: 1.0.w,
+                                    // عرض الشرطة (يمكن زيادته إذا أردت خطًا أعرض)
+                                    height: 3.h,
+                                    // ارتفاع الشرطة
+                                    color: Color(0xff121212), // لون الشرطة
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: 8.w,
+                              height: 8.h,
+                              decoration: BoxDecoration(
+                                color: Color(0xff60BF95),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 16),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'pick-up',
+                                  // will  put currentLocation when provide maps
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff475467),
+                                  ),
+                                ),
+                                Text(
+                                  "${schduleCubit.currentLocationCon.text}",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff121212),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.h),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Destination",
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff475467),
+                                  ),
+                                ),
+
+                                Text(
+                                  '${schduleCubit.destinationCon.text}',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff121212),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+
+                  //  4. Row with bottom border
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.only(bottom: 12.h),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.grey.shade300,
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/noun-distance.svg',
+                              width: 16.w,
+                              height: 16.h,
+                            ),
+                            SizedBox(width: 8.w),
                             Text(
-                              'Pick-up',
+                              'Distance ',
                               style: TextStyle(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff475467),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff344054),
                               ),
                             ),
                             Text(
-                              'Sollefteå ,Sweden',
+                              '${schduleCubit.scheduledRideResponse?.distanceKm?.toStringAsFixed(0)} km',
                               style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
                                 color: Color(0xff121212),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 20.h),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Spacer(),
+                        Row(
                           children: [
+                            Icon(
+                              Icons.timer,
+                              color: Color(0xff344054),
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 8),
                             Text(
-                              'Destination',
+                              'Time ',
                               style: TextStyle(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff475467),
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff344054),
                               ),
                             ),
-
                             Text(
-                              'Försvarsmakten Västernorrland',
+                              '${schduleCubit.getEstimatedTime(schduleCubit.scheduledRideResponse?.distanceKm).toStringAsFixed(0)} mins',
                               style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
                                 color: Color(0xff121212),
                               ),
                             ),
@@ -203,167 +306,105 @@ class UnderReview extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 24.h),
-
-              //  4. Row with bottom border
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                padding: EdgeInsets.only(bottom: 12.h),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey.shade300, width: 1),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/images/noun-distance.svg',
-                          width: 16.w,
-                          height: 16.h,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Distance',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff344054),
-                          ),
-                        ),
-                        Text(
-                          '40Km',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff121212),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.timer,
-                          color: Color(0xff344054),
-                          size: 16.sp,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Time',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff344054),
-                          ),
-                        ),
-                        Text(
-                          '32 mins',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff121212),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              // 5. Text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  'Payment',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff121212),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.h),
-              // 6. Row with background
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.h),
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFCFCFD),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Row(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Total fare:',
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF344054),
-                          ),
-                        ),
-                        // SizedBox(width: 8),
-                        Text(
-                          '122 EGP',
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff183E91),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Icon(Icons.payment, color: Color(0XFF183E91)),
-                        SizedBox(width: 8),
-                        Text(
-                          'Credit Card',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF266FFF),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    confirmationDeleteDialog(
-                      context,
-                      text: 'Once you delete this card it will be gone forever.', onPressed: (){},
-                    );
-                  },
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFFF04438),
+                  SizedBox(height: 16),
+                  // 5. Text
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      'Payment',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff121212),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 10.h),
+                  // 6. Row with background
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16.h),
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFCFCFD),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Row(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Total fare:',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF344054),
+                              ),
+                            ),
+                            // SizedBox(width: 8),
+                            Text(
+                              '${price.toStringAsFixed(0)} EGP',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff183E91),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.payment, color: Color(0XFF183E91)),
+                            SizedBox(width: 8),
+                            Text(
+                              'Credit Card',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF266FFF),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        confirmationDeleteDialog(
+                          title:"Are you Sure!",
+                          context,
+                          text:
+                              'Once you delete this card it will be gone forever.',
+                          onPressed: () async {
+                            CustomFindDriverRequestCancel(
+                              height: 170.h,
+                              context: context, scheduledRideCubit: schduleCubit, isNormalRide: false,);
+                            schduleCubit.cancelRide(tripId:schduleCubit.scheduledRideResponse?.trip?.tripId ??"",
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFF04438),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                ],
               ),
-              SizedBox(height: 16),
-
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
