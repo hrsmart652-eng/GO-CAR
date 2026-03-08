@@ -56,19 +56,19 @@ class EndPoint {
   }
 
   static String driverInLocationTrip(TripId) {
-    return "drivertrip/arrived/$TripId";
+    return "driverTrip/arrived/$TripId";
   }
 
   static String driverStartTrip(TripId) {
-    return "drivertrip/start/$TripId";
+    return "driverTrip/start/$TripId";
   }
 
   static String driverEndTrip(TripId) {
-    return "drivertrip/end/$TripId";
+    return "driverTrip/end/$TripId";
   }
 
   static String driverRejectTrip(TripId) {
-    return "drivertrip/reject/$TripId";
+    return "driverTrip/reject/$TripId";
   }
 
   static String driverReview(TripId) {
@@ -123,8 +123,8 @@ class ApiKeys {
   static String email = "email";
   static String phoneNumber = "phoneNumber";
   static String id = "id";
-  static String clientId = "id";
-  static String driverId = "id";
+  static String clientId = "clientId";
+  static String driverId = "driverId";
   static String shiftId = "_id";
   static String rating = "rating";
   static String comment = "comment";
@@ -141,6 +141,9 @@ class ApiKeys {
   static String tripCode = "tripCode";
   static String tripId = "_id";
   static String review = "review";
+  static String currentLocation = "currentLocation";
+  static String destination = "destination";
+  static String carTypeImg = "carTypeImg";
   static String date = "date";
   static String allTSchdulerips = "allScheduleTrips";
 }

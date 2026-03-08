@@ -162,6 +162,7 @@ class AppRouter {
       case Routes.drivereditProfileScreen:
         return MaterialPageRoute(builder: (_) => DriverEditProfileScreen());
 
+
       case Routes.settingsScreen:
         return MaterialPageRoute(builder: (_) => SettingsScreen());
 
