@@ -32,7 +32,6 @@ class DriverLoginRepository {
 
       CacheHelper().saveData(key: ApiKeys.token, value: driver.token);
       CacheHelper().saveData(key: ApiKeys.id, value: decodedToken[ApiKeys.id]);
-      CacheHelper().saveData(key: ApiKeys.driverId, value: decodedToken[ApiKeys.driverId]);
       return right(driver);
     } on ServerException catch (e) {
       return left(e.errorModel.errorMessage);
