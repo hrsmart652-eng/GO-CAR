@@ -44,6 +44,7 @@ Widget NormalRidetBody({
                   controller: normalCubit.currentLocationCon,
                   enableTextField: false,),
                 onTap: () {
+                  CacheHelper().saveData(key:ApiKeys.currentLocation, value:normalCubit.currentLocationCon.text);
                   Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) =>
                           SearchLocationAndDestination(
@@ -61,6 +62,7 @@ Widget NormalRidetBody({
                   controller: normalCubit.destinationCon,
                   enableTextField: false,),
                 onTap: () {
+                  CacheHelper().saveData(key:ApiKeys.destination, value:normalCubit.destinationCon.text);
                   Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) =>
                           SearchLocationAndDestination(
@@ -117,7 +119,7 @@ Widget NormalRidetBody({
               DisplayNormalRideDataItems(normalCubit: normalCubit),
               CustomElevatedBtn(
                 btnName: 'Done',
-                onPressed: () {
+                onPressed: (){
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   showSnackBar(context, message: 'Request Sent Completed ');
                   // final tripId = CacheHelper().getData(key: ApiKeys.tripId);

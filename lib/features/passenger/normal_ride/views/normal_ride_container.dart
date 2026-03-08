@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_car/core/routing/routes.dart';
-import 'package:go_car/core/services/api/end_points.dart';
-import 'package:go_car/core/widgets/custom_elevated_btn.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_cubit.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_state.dart';
-import 'package:go_car/features/passenger/profile/cubit/client_profile_state.dart';
-
-import '../../../../core/widgets/show_snackbar.dart';
 import '../widgets/normal_ride_body.dart';
 import '../widgets/normal_ride_images_horzenital.dart';
 

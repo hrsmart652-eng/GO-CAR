@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:go_car/features/driver/profile/models/driver_model.dart' hide TripModel;
 import 'package:go_car/features/passenger/normal_ride/model/trip_response_model.dart';
 import 'package:go_car/features/passenger/profile/model/client_model.dart';
 
@@ -51,6 +50,7 @@ class RequestRideRepository {
       await CacheHelper().saveData(key: ApiKeys.tripId, value: tripId);
       await CacheHelper().saveData(key: ApiKeys.message, value: rideMsg);
       await CacheHelper().saveData(key: ApiKeys.tripCode, value: tripCode);
+
       //************************************************************************
       debugPrint('Trip Code saved: ${tripCode}');
       debugPrint('Trip Response: ${tripResponse}');
@@ -79,34 +79,34 @@ class RequestRideRepository {
     }
   }
 
-  Future<Either<String, TripStatusModel>> acceptTrip({
-    required String driverId,
-  }) async {
-    try {
-      final response = await api.patch(
-        EndPoint.driverAcceptTrip(driverId),
-        data: {"driverId": driverId},
-      );
-
-      // تحقق من أن response مش null
-      if (response == null) {
-        return Left("No response from server");
-      }
-
-      // هنا نستخدم الـ response مباشرة لإنشاء الموديل
-      TripStatusModel tripStatusModel = TripStatusModel.fromJson(response);
-
-      // save driver ID locally
-      await CacheHelper().saveData(key: ApiKeys.driverId, value: driverId);
-
-      debugPrint("Accepted Trip: ${tripStatusModel.toJson()}");
-
-      return Right(tripStatusModel);
-    } catch (e) {
-      debugPrint('Request Ride Error: $e');
-      return Left(e.toString());
-    }
-  }
+  // Future<Either<String, TripStatusModel>> acceptTrip({
+  //   required String driverId,
+  // }) async {
+  //   try {
+  //     final response = await api.patch(
+  //       EndPoint.driverAcceptTrip(driverId),
+  //       data: {"driverId": driverId},
+  //     );
+  //
+  //     // تحقق من أن response مش null
+  //     if (response == null) {
+  //       return Left("No response from server");
+  //     }
+  //
+  //     // هنا نستخدم الـ response مباشرة لإنشاء الموديل
+  //     TripStatusModel tripStatusModel = TripStatusModel.fromJson(response);
+  //
+  //     // save driver ID locally
+  //     await CacheHelper().saveData(key: ApiKeys.driverId, value: driverId);
+  //
+  //     debugPrint("Accepted Trip: ${tripStatusModel.toJson()}");
+  //
+  //     return Right(tripStatusModel);
+  //   } catch (e) {
+  //     debugPrint('Request Ride Error: $e');
+  //     return Left(e.toString());
+  //   }
+  // }
 
   Future<Either<String, ClientModel>> getClientById() async {
     try {
@@ -137,8 +137,9 @@ class RequestRideRepository {
     }
   }
 
-
-  Future<Either<String, DriverInfoModel>> getDriverById({required String driverId}) async {
+  Future<Either<String, DriverInfoModel>> getDriverById({
+    required String driverId,
+  }) async {
     try {
       //final driverId = CacheHelper().getData(key: ApiKeys.driverId);
       final response = await api.get(EndPoint.getDriver(driverId));
@@ -202,9 +203,11 @@ class RequestRideRepository {
       final response = await api.get(EndPoint.getAllTrips());
 
       List<TripResponseModel> trips =
-      response.map((trip) => TripResponseModel.fromJson(trip)).toList();
+          response.map((trip) => TripResponseModel.fromJson(trip)).toList();
 
-      debugPrint("****************************************All Trips : ${trips}***********************************");
+      debugPrint(
+        "****************************************All Trips : ${trips}***********************************",
+      );
 
       return right(trips);
     } catch (error) {
@@ -212,32 +215,45 @@ class RequestRideRepository {
     }
   }
 
-  Future<Either<String, TripStatusModel>> getTripAcceptedAndCompleted({
-    required String clientId,
-  }) async {
+  Future<Either<String, TripStatusModel>> getTripAcceptedAndCompleted() async {
     try {
+      final tripId = CacheHelper().getData(key: ApiKeys.tripId);
+      final clientId = CacheHelper().getData(key: ApiKeys.clientId);
       final clientTripsResponse = await api.get(EndPoint.getTrip(clientId));
 
-      final driverId = CacheHelper().getData(key: ApiKeys.driverId);
-      final tripId = CacheHelper().getData(key: ApiKeys.tripId);
       final clientTripRes = clientTripsResponse["trips"] as List<dynamic>;
 
-
-      List<TripStatusModel> clientTrips = clientTripRes
-          .map((trip) => TripStatusModel.fromJson(trip as Map<String, dynamic>))
-          .toList();
+      List<TripStatusModel> clientTrips =
+          clientTripRes
+              .map(
+                (trip) =>
+                    TripStatusModel.fromJson(trip as Map<String, dynamic>),
+              )
+              .toList();
 
       TripStatusModel? foundTrip;
 
       for (var trip in clientTrips) {
-        final status = trip.status?.toLowerCase();
-        if ((status == "accepted" || status == "completed") &&
-            trip.driverId == driverId && trip.id==tripId &&trip.client==clientId) {
+        if ((trip.status?.toLowerCase() == "accepted" ||
+                trip.status?.toLowerCase() == "completed") &&
+            trip.driverId != null &&
+            trip.id == tripId &&
+            trip.client == clientId) {
+          print("trip.status = ${trip.status}");
+          print("trip.id = ${trip.id}");
+          print("*************************************************");
           foundTrip = trip;
+          final driverId = CacheHelper().saveData(
+            key: ApiKeys.driverId,
+            value: trip.driverId,
+          );
           break;
         }
       }
       if (foundTrip == null) {
+        print(
+          "****************************Trip : ${foundTrip}***************************",
+        );
         return left("No accepted or completed trip found");
       }
 
@@ -246,16 +262,23 @@ class RequestRideRepository {
       return left(error.toString());
     }
   }
-  Future<Either<String, List<TripStatusModel>>> getAllDriverTrips()async{
-    try{
+
+  Future<Either<String, List<TripStatusModel>>> getAllDriverTrips() async {
+    try {
       final driverId = CacheHelper().getData(key: ApiKeys.driverId);
       final driveTripsResponse = await api.get(EndPoint.getTrip(driverId));
+
       final driveTripRes = driveTripsResponse["trips"] as List<dynamic>;
-      List<TripStatusModel> driveTrips = driveTripRes
-          .map((trip) => TripStatusModel.fromJson(trip as Map<String, dynamic>))
-          .toList();
+
+      List<TripStatusModel> driveTrips =
+          driveTripRes
+              .map(
+                (trip) =>
+                    TripStatusModel.fromJson(trip as Map<String, dynamic>),
+              )
+              .toList();
       return right(driveTrips);
-    }catch(error){
+    } catch (error) {
       return left(error.toString());
     }
   }

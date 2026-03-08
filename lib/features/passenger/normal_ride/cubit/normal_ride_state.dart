@@ -4,6 +4,7 @@ import 'package:go_car/features/passenger/normal_ride/model/rating_model.dart';
 import 'package:go_car/features/passenger/normal_ride/model/ride_accepted_model.dart';
 import 'package:go_car/features/passenger/normal_ride/model/trip_response_model.dart';
 
+import '../../../driver/home/model/new_trip_model.dart';
 import '../../../driver/profile/models/driver_model.dart';
 import '../../../driver/profile/models/driver_reviews_model.dart';
 import '../model/visa_bank_model.dart';
@@ -63,7 +64,8 @@ final class AllTripsLoadingState extends RequestRideState {}
 final class AllTripsSuccessState extends RequestRideState {
   TripStatusModel  trip;
   DriverInfoModel driverInfo;
-  AllTripsSuccessState({required this.trip,required this.driverInfo});
+  List<TripStatusModel> driverTrips;
+  AllTripsSuccessState({required this.trip,required this.driverInfo,required this.driverTrips});
 }
 final class AllTripsFailureState extends RequestRideState {
   String errorMsg;
@@ -72,6 +74,11 @@ final class AllTripsFailureState extends RequestRideState {
 final class DriverInfoSuccessState extends RequestRideState {
   DriverInfoModel driverInfoModel;
   DriverInfoSuccessState({required this.driverInfoModel});
+}
+
+class DriverRidesLoadedState extends RequestRideState {
+  List<TripStatusModel> driverTrips;
+  DriverRidesLoadedState({required this.driverTrips});
 }
 
 class TripsReviewsLoaded extends RequestRideState {

@@ -21,12 +21,13 @@ import 'normal_ride_state.dart';
 class NormalRideCubit extends Cubit<RequestRideState> {
   NormalRideCubit({required this.requestRideRepository})
     : super(RequestRideInitial()) {
-   fetchData();
+    fetchData();
   }
 
   RequestRideRepository requestRideRepository;
   TripStatusModel? tripStatusModel;
-DriverInfoModel? driverInfo;
+  DriverInfoModel? driverInfo;
+
   static NormalRideCubit get(context) =>
       BlocProvider.of<NormalRideCubit>(context);
   int currentPassengersIndex = 1;
@@ -94,13 +95,7 @@ DriverInfoModel? driverInfo;
   Map<String, dynamic> locationData = {};
   Map<String, dynamic> destinationData = {};
   DriverReviewsModel? driverReviews;
-  final ratingTexts = [
-    'Worst',
-    'Bad',
-    'Okay',
-    'Good',
-    'Awesome'
-  ];
+  final ratingTexts = ['Worst', 'Bad', 'Okay', 'Good', 'Awesome'];
 
   final ratingDescriptions = [
     'Worst Experience',
@@ -118,16 +113,9 @@ DriverInfoModel? driverInfo;
     'assets/images/awesome.png',
   ];
 
-  final colors = [
-    0xffEBEFFF,
-    0xffFEF0C7,
-    0xffC7F1FE,
-    0xffFAD1E0,
-    0xffD1FADF,
-  ];
+  final colors = [0xffEBEFFF, 0xffFEF0C7, 0xffC7F1FE, 0xffFAD1E0, 0xffD1FADF];
 
   double sliderValue = 2;
-
 
   Timer? tripTimer;
 
@@ -144,10 +132,10 @@ DriverInfoModel? driverInfo;
         "type": "Point",
         "coordinates": [32.2500.toString(), 31.0500.toString()],
       };
-      CacheHelper().saveData(
-        key: ApiKeys.driverId,
-        value: "68a4176698c08494803ccb55",
-      );
+      // CacheHelper().saveData(
+      //   key: ApiKeys.driverId,
+      //   value: "68a4176698c08494803ccb55",
+      // );
       final clientId = CacheHelper().getData(key: ApiKeys.clientId);
       final result = await requestRideRepository.requestRide(
         userId: clientId,
@@ -168,10 +156,14 @@ DriverInfoModel? driverInfo;
         },
         (normalRideModel) {
           normalRide = normalRideModel;
-
+          CacheHelper().saveData(
+            key: ApiKeys.tripId,
+            value: normalRideModel.trip.id,
+          );
           print(
             'Ride requested successfully: ${normalRideModel.trip.toJson()}',
           );
+          print('Cache Trip Id: ${CacheHelper().getData(key: ApiKeys.tripId)}');
           // return meassage to check about trip status
 
           emit(RequestRideSuccess());
@@ -209,7 +201,12 @@ DriverInfoModel? driverInfo;
 
     try {
       final dt = DateTime.parse(dateTimeStr).toLocal();
-      final hour = dt.hour > 12 ? dt.hour - 12 : dt.hour == 0 ? 12 : dt.hour;
+      final hour =
+          dt.hour > 12
+              ? dt.hour - 12
+              : dt.hour == 0
+              ? 12
+              : dt.hour;
       final minute = dt.minute.toString().padLeft(2, '0');
       final period = dt.hour >= 12 ? 'PM' : 'AM';
       return '$hour:$minute $period';
@@ -228,6 +225,7 @@ DriverInfoModel? driverInfo;
   }
 
   changeCarTypeIndex({required int index}) {
+    CacheHelper().saveData(key:ApiKeys.carTypeImg, value:carsAndNames[index]["image"]);
     currentCarIndex = index;
     selectedCarType = carsAndNames[currentCarIndex]["type"];
     normalRide?.trip.carType != selectedCarType;
@@ -235,14 +233,13 @@ DriverInfoModel? driverInfo;
   }
 
   void startCheckingTripStatus() {
-    final clientId = CacheHelper().getData(key: ApiKeys.clientId);
-
     tripTimer?.cancel();
 
-    tripTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
-      /// -------- GET TRIP ----------
-      final tripResponse = await requestRideRepository
-          .getTripAcceptedAndCompleted(clientId: clientId);
+    tripTimer = Timer.periodic(const Duration(minutes:1), (_) async {
+      final driverId = CacheHelper().getData(key: ApiKeys.driverId);
+
+      final tripResponse =
+          await requestRideRepository.getTripAcceptedAndCompleted();
 
       tripResponse.fold(
         (error) {
@@ -251,34 +248,58 @@ DriverInfoModel? driverInfo;
         (trip) async {
           final status = trip.status?.toLowerCase();
 
-          debugPrint("STATUS: $status | DRIVER: ${trip.driverId}");
-
-          if (trip.driverId == null || trip.driverId!.isEmpty) {
-            debugPrint("Waiting driver...");
+          if (trip.driverId?.isEmpty ?? true) {
+            debugPrint("Driver ID is NULL");
             return;
           }
 
-          /// -------- GET DRIVER ----------
           final driverResponse = await requestRideRepository.getDriverById(
-            driverId: trip.driverId!,
+            driverId: trip.driverId ?? driverId ?? "",
           );
 
           driverResponse.fold(
             (error) {
               debugPrint("Driver Error $error");
             },
-            (driver)async {
-              driverInfo=driver;
-              if (status == "accepted") {
-                emit(AllTripsSuccessState(trip: trip, driverInfo: driver));
-              }
-              if (status == "completed") {
-                emit(AllTripsSuccessState(trip: trip, driverInfo: driver));
-                stopCheckingTripStatus();
-              }
+            (driver) async {
+              driverInfo = driver;
+
+              final driverTripsRes =
+                  await requestRideRepository.getAllDriverTrips();
+
+              driverTripsRes.fold(
+                (error) {
+                  debugPrint(error);
+                },
+                (trips) {
+                  driverTrips = trips;
+
+                  if (status == "accepted") {
+                    emit(
+                      AllTripsSuccessState(
+                        trip: trip,
+                        driverInfo: driver,
+                        driverTrips: trips,
+                      ),
+                    );
+                    stopCheckingTripStatus();
+                  } else if (status == "completed") {
+                    emit(
+                      AllTripsSuccessState(
+                        trip: trip,
+                        driverInfo: driver,
+                        driverTrips: trips,
+                      ),
+                    );
+                    stopCheckingTripStatus();
+                  }
+                },
+              );
             },
           );
+          stopCheckingTripStatus();
         },
+
       );
     });
   }
@@ -358,17 +379,19 @@ DriverInfoModel? driverInfo;
   }
 
   Future<void> getDriverReviews() async {
-
     emit(RequestRideLoading());
-    final response = await DriverReviewsRepository(api:DioConsumer(dio:Dio())).getDriverReviews();
+    final response =
+        await DriverReviewsRepository(
+          api: DioConsumer(dio: Dio()),
+        ).getDriverReviews();
 
     response.fold(
       (error) {
-       /// emit(RequestRideFailure(errMessage: error));
+        /// emit(RequestRideFailure(errMessage: error));
       },
       (reviews) {
         driverReviews = reviews;
-       // emit(TripsReviewsLoaded());
+        // emit(TripsReviewsLoaded());
       },
     );
   }
@@ -380,31 +403,29 @@ DriverInfoModel? driverInfo;
 
     response.fold(
       (error) {
-         print("error:${error}");
+        print("error:${error}");
       },
       (trips) {
         driverTrips = trips;
-       // emit(TripsReviewsLoaded());
+        emit(DriverRidesLoadedState(driverTrips: driverTrips));
       },
     );
   }
 
   resetTrip() {
-    normalRide = null;
-    currentLocationCon.clear();
-    destinationCon.clear();
+    // normalRide = null;
+    // currentLocationCon.clear();
+    // destinationCon.clear();
     currentCarIndex = 0;
     currentLuggageIndex = 0;
     currentPassengersIndex = 1;
     paymentMethod = "";
-    tripResponseModel = null;
-    tripStatusModel = null;
     emit(ResetTripState());
   }
 
- fetchData()async{
-  await getDriverReviews();
-  await getAllDriversTrips();
- }
-
+  fetchData() async {
+    await getDriverReviews();
+    await getAllDriversTrips();
+    startCheckingTripStatus();
+  }
 }

@@ -8,8 +8,7 @@ class NormalRideModel {
   final double? price;
   final double? distanceKm;
   final TripModel trip; // trip model
-//  final ClientModel clientModel;
- // final DriverModel driverModel;
+
 
   NormalRideModel({
     required this.success,
@@ -17,8 +16,6 @@ class NormalRideModel {
     required this.price,
     required this.distanceKm,
     required this.trip,
-  //  required this.clientModel,
-  //  required this.driverModel
   });
 
   factory NormalRideModel.fromJson(Map<String, dynamic> jsonData) {
@@ -28,8 +25,6 @@ class NormalRideModel {
       price: jsonData['price']??0.0,
       distanceKm: jsonData['distanceKm']??0.0,
       trip:TripModel.fromJson(jsonData['trip']),
-    //  clientModel: ClientModel.fromJson(jsonData['client']),
-    //  driverModel: DriverModel.fromJson(jsonData['driverId']),
     );
   }
   Map<String, dynamic> toJson() {
@@ -39,8 +34,7 @@ class NormalRideModel {
       'price': price,
       'distanceKm': distanceKm,
       'trip': trip.toJson(),
-    //  'client':clientModel.toJson(),
-    //  'driverId':driverModel.toJson()
+
     };
   }
 }
