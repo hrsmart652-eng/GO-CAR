@@ -3,6 +3,7 @@ import 'package:go_car/core/services/api/api_consumer.dart';
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/core/services/errors/exceptions.dart';
 import 'package:go_car/features/driver/home/model/driver_ride_model.dart';
+import 'package:go_car/features/passenger/normal_ride/model/driver_info_model.dart';
 
 class DriverRideRepository {
   final ApiConsumer api;

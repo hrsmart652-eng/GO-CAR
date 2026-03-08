@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_car/core/database/cache/cache_helper.dart';
+import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/driver/home/cubit/driver_ride_cubit.dart';
 import 'package:go_car/features/driver/home/cubit/new_trip_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:go_car/features/driver/home/cubit/new_trip_state.dart';
 import 'package:go_car/features/driver/home/views/widgets/normal_ride/cancel_bar.dart';
 import 'package:go_car/features/driver/home/views/widgets/normal_ride/ride_details.dart';
 import 'package:go_car/features/driver/home/views/widgets/normal_ride/thank_you.dart';
+
 import '../../../../../core/widgets/custom_elevated_btn.dart';
 import '../widgets/normal_ride/ride_end_details.dart';
 
@@ -43,14 +45,16 @@ class _DriverRideScreenState extends State<DriverRideScreen> {
                   context,
                 ).showSnackBar(SnackBar(content: Text(state.errMessage))),
               }
+
             else if (state is NewTripSuccess)
               {
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text('Success'))),
-              },
+              }
           },
       builder: (context, state) {
+        final cubit=NewTripCubit.get(context);
         return Scaffold(
           backgroundColor: Color(0xffFCFCFD),
           body: SafeArea(
@@ -372,13 +376,7 @@ class _DriverRideScreenState extends State<DriverRideScreen> {
                                                   onPressed: () {
                                                     context
                                                         .read<DriverRideCubit>()
-                                                        .endRide(
-                                                          CacheHelper().getData(
-                                                            key:
-                                                                ApiKeys
-                                                                    .tripCode,
-                                                          ),
-                                                        );
+                                                        .endRide();
                                                     setState(() {
                                                       ended = true;
                                                     });
@@ -398,13 +396,7 @@ class _DriverRideScreenState extends State<DriverRideScreen> {
                                                   onPressed: () {
                                                     context
                                                         .read<DriverRideCubit>()
-                                                        .startRide(
-                                                          CacheHelper().getData(
-                                                            key:
-                                                                ApiKeys
-                                                                    .tripCode,
-                                                          ),
-                                                        );
+                                                        .startRide();
                                                     setState(() {
                                                       started = true;
                                                     });
@@ -421,15 +413,7 @@ class _DriverRideScreenState extends State<DriverRideScreen> {
                                                 child: CustomElevatedBtn(
                                                   btnName: 'I\'m at location',
                                                   onPressed: () {
-                                                    context
-                                                        .read<DriverRideCubit>()
-                                                        .inLocation(
-                                                          CacheHelper().getData(
-                                                            key:
-                                                                ApiKeys
-                                                                    .tripCode,
-                                                          ),
-                                                        );
+                                                    context.read<DriverRideCubit>().inLocation();
                                                     setState(() {
                                                       atLocation = true;
                                                     });

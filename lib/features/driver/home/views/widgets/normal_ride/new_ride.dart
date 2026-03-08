@@ -219,22 +219,8 @@ class _NewRideState extends State<NewRide> {
                                     context.read<DriverRideCubit>().acceptRide(
                                       state.trips.elementAt(index).id,
                                     );
-                                    final tripCode =
-                                    CacheHelper().getData(key: ApiKeys.tripCode);
-                                    CacheHelper().saveData(
-                                      key: ApiKeys.tripId,
-                                      value: state.trips.elementAt(index).id,
-                                    );
-                                    CacheHelper().saveData(
-                                      key: ApiKeys.tripCode,
-                                      value: state.trips.elementAt(index).id,
-                                    );
-                                    // CacheHelper().saveData(
-                                    //   key: 'index',
-                                    //   value: index,
-                                    // );
-
-                                    print('trip id came right ${tripCode ?? "No tripCode"}');
+                                    print("trip id is :${state.trips.elementAt(index).id}");
+                                    print("cache trip id is :${CacheHelper().getData(key: ApiKeys.tripId)}");
                                     Navigator.pushNamed(context, Routes.ride);
                                   },
                                   child: Text(

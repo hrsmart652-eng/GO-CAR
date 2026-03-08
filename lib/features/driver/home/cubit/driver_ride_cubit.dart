@@ -8,8 +8,8 @@ import 'driver_ride_state.dart';
 class DriverRideCubit extends Cubit<DriverRideState> {
   DriverRideCubit(this.rideRepository) : super(DriverRideInitial());
   final DriverRideRepository rideRepository;
+  static DriverRideCubit get(context)=>BlocProvider.of<DriverRideCubit>(context);
 
-  DriverRideModel? driver;
 
   acceptRide(String tripId) async {
     emit(DriverRideLoading());
@@ -25,6 +25,12 @@ class DriverRideCubit extends Cubit<DriverRideState> {
           key: ApiKeys.driverId,
           value:driverRideModel.driverId
         );
+        CacheHelper().saveData(
+            key: ApiKeys.tripId,
+            value:driverRideModel.id
+        );
+
+        print("**************************Driver Id :${driverRideModel.driverId}**********************");
         emit(DriverRideSuccess());},
     );
   }
@@ -35,12 +41,19 @@ class DriverRideCubit extends Cubit<DriverRideState> {
 
     response.fold(
       (errorMessage) => emit(DriverRideFailure(errMessage: errorMessage)),
-      (DriverRideModel) => emit(DriverRideSuccess()),
+      (driverRideModel) {
+        CacheHelper().saveData(
+            key: ApiKeys.tripId,
+            value:driverRideModel.id
+        );
+        emit(DriverRideSuccess());
+      }
     );
   }
 
-  startRide(String tripId) async {
+  startRide() async {
     emit(DriverRideLoading());
+    final tripId=CacheHelper().getData(key: ApiKeys.tripId,);
     final response = await rideRepository.startTrip(TripId: tripId);
 
     response.fold(
@@ -49,18 +62,19 @@ class DriverRideCubit extends Cubit<DriverRideState> {
     );
   }
 
-  inLocation(String tripId) async {
+  inLocation() async {
     emit(DriverRideLoading());
+    final tripId=CacheHelper().getData(key: ApiKeys.tripId,);
     final response = await rideRepository.inLocation(TripId: tripId);
-
     response.fold(
       (errorMessage) => emit(DriverRideFailure(errMessage: errorMessage)),
       (DriverRideModel) => emit(DriverRideSuccess()),
     );
   }
 
-  endRide(String tripId) async {
+  endRide() async {
     emit(DriverRideLoading());
+    final tripId=CacheHelper().getData(key: ApiKeys.tripId,);
     final response = await rideRepository.endRide(TripId: tripId);
     response.fold(
       (errorMessage) => emit(DriverRideFailure(errMessage: errorMessage)),
