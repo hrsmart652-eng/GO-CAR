@@ -5,7 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_cubit.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_state.dart';
 
+import '../../../../core/database/cache/cache_helper.dart';
 import '../../../../core/routing/routes.dart';
+import '../../../../core/services/api/end_points.dart';
 import '../../../../core/widgets/custom_elevated_btn.dart';
 import '../../../../core/widgets/show_snackbar.dart';
 
@@ -35,12 +37,14 @@ class _RideEndedState extends State<RideEnded> {
       },
       builder: (context, state) {
         final cubit = NormalRideCubit.get(context);
-
+        final driver =state is AllTripsSuccessState?state.driverInfo:cubit.driverInfo;
+        final driverTrips =state is AllTripsSuccessState?state.driverTrips:cubit.driverTrips;
         return Scaffold(
           backgroundColor: Colors.white,
           body: SafeArea(
-            child: Column(
+            child:Column(
               children: [
+
                 /// ================= HEADER =================
                 Text(
                   "Ride ended",
@@ -93,6 +97,7 @@ class _RideEndedState extends State<RideEnded> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+
                               /// DRIVER INFO ROW
                               Row(
                                 children: [
@@ -102,21 +107,27 @@ class _RideEndedState extends State<RideEnded> {
                                     children: [
                                       CircleAvatar(
                                         radius: 34.r,
-                                        backgroundImage: cubit.driverInfo!.image.isNotEmpty
-                                            ? NetworkImage(cubit.driverInfo!.image)
-                                            : const AssetImage("assets/images/driver_image.png")
+                                        backgroundImage:driver!.image
+                                            .isNotEmpty
+                                            ? NetworkImage(
+                                            driver.image)
+                                            : const AssetImage(
+                                            "assets/images/driver_image.png")
                                         as ImageProvider,
                                       ),
                                       Positioned(
                                         bottom: -10.h,
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 3.h),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(6.r),
+                                            borderRadius: BorderRadius.circular(
+                                                6.r),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.1),
+                                                color: Colors.black.withOpacity(
+                                                    0.1),
                                                 blurRadius: 4,
                                                 offset: const Offset(0, 2),
                                               ),
@@ -140,10 +151,10 @@ class _RideEndedState extends State<RideEnded> {
                                   /// NAME + RATE
                                   Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        cubit.driverInfo?.fullName ?? "",
+                                        driver.fullName ?? "",
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15.sp,
@@ -163,7 +174,7 @@ class _RideEndedState extends State<RideEnded> {
                                           ),
                                           SizedBox(width: 4.w),
                                           Text(
-                                            "${cubit.driverTrips.length} rides",
+                                            "${driverTrips.length} rides",
                                           ),
                                         ],
                                       ),
@@ -188,7 +199,9 @@ class _RideEndedState extends State<RideEnded> {
                                         ),
                                       ),
                                       Text(
-                                        cubit.formatTime(cubit.driverInfo!.updatedAt.toString()),
+                                        cubit.formatTime(
+                                          driver?.updatedAt
+                                                .toString()),
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w500,
@@ -217,7 +230,7 @@ class _RideEndedState extends State<RideEnded> {
                                     SizedBox(width: 10.w),
                                     Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text("Pick-up"),
                                         Text(cubit.currentLocationCon.text),
@@ -235,7 +248,7 @@ class _RideEndedState extends State<RideEnded> {
                               /// DISTANCE + TIME
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
@@ -244,7 +257,8 @@ class _RideEndedState extends State<RideEnded> {
                                       ),
                                       SizedBox(width: 5.w),
                                       Text(
-                                        "Distance ${cubit.normalRide?.distanceKm?.toStringAsFixed(0)}Km",
+                                        "Distance ${cubit.normalRide?.distanceKm
+                                            ?.toStringAsFixed(0)}Km",
                                       ),
                                     ],
                                   ),
@@ -255,7 +269,9 @@ class _RideEndedState extends State<RideEnded> {
                                       ),
                                       SizedBox(width: 5.w),
                                       Text(
-                                        "Time ${cubit.getEstimatedTime(cubit.normalRide?.distanceKm).toStringAsFixed(0)} Mins",
+                                        "Time ${cubit.getEstimatedTime(
+                                            cubit.normalRide?.distanceKm)
+                                            .toStringAsFixed(0)} Mins",
                                       ),
                                     ],
                                   ),
@@ -270,13 +286,13 @@ class _RideEndedState extends State<RideEnded> {
                               /// PAYMENT
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
                                     children: [
                                       Text("Total fare: "),
                                       Text(
-                                        "${cubit.normalRide?.price?.toStringAsFixed(0)} EGP",
+                                        "${cubit.normalRide?.trip.price} EGP",
                                         style: TextStyle(
                                           color: Color(0xff266FFF),
                                           fontWeight: FontWeight.w600,
@@ -286,29 +302,25 @@ class _RideEndedState extends State<RideEnded> {
                                   ),
                                   Row(
                                     children: [
-                                      cubit
-                                                  .normalRide
-                                                  ?.trip
-                                                  .paymentInfo
-                                                  .method ==
-                                              "cash"
+                                          cubit.normalRide?.trip.paymentInfo.method == "cash"
                                           ? SvgPicture.asset(
-                                            "assets/images/noun-cash.svg",
-                                          )
+                                        "assets/images/noun-cash.svg",
+                                      )
                                           : Image.asset(
-                                            "assets/images/credit_card.png",
-                                            width: 24.w,
-                                          ),
+                                        "assets/images/credit_card.png",
+                                        width: 24.w,
+                                      ),
                                       SizedBox(width: 6.w),
                                       Text(cubit.normalRide
                                           ?.trip
                                           .paymentInfo
-                                          .method =="cash"?"Cash":"Credit card"),
+                                          .method == "cash"
+                                          ? "Cash"
+                                          : "Credit card"),
                                     ],
                                   ),
                                 ],
                               ),
-
                               SizedBox(height: 18.h),
 
                               /// RATING BUTTON
@@ -316,7 +328,7 @@ class _RideEndedState extends State<RideEnded> {
                                 btnSize: Size(double.infinity, 50.h),
                                 btnName: "Rating",
                                 onPressed: () {
-                                  Navigator.pushNamed(context,Routes.rating);
+                                  Navigator.pushNamed(context, Routes.rating);
                                 },
                               ),
                             ],

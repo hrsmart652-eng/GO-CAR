@@ -5,6 +5,8 @@ import 'package:go_car/core/widgets/show_snackbar.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_cubit.dart';
 import 'package:go_car/features/passenger/normal_ride/cubit/normal_ride_state.dart';
 
+import '../../../../core/database/cache/cache_helper.dart';
+import '../../../../core/services/api/end_points.dart';
 import '../../normal_ride/widgets/custom_location_destination_ride.dart';
 import '../widgets/custom_find_driver_text.dart';
 import '../widgets/custom_info_driver_sheet.dart';
@@ -51,6 +53,7 @@ class _FindDriverState extends State<FindDriver> {
         return Scaffold(
           body: Stack(
             children: [
+
               /// ================= Map =================
               Image(
                 image: const AssetImage("assets/images/map.png"),
@@ -61,7 +64,7 @@ class _FindDriverState extends State<FindDriver> {
 
               /// ================= Locations =================
               CustomLocationAndDestinationRide(
-                enableNavigate:false,
+                enableNavigate: false,
                 currentLocCon: cubit.currentLocationCon,
                 destinationCon: cubit.destinationCon,
               ),
@@ -101,7 +104,7 @@ class _FindDriverState extends State<FindDriver> {
               //   ),
               if (state is AllTripsSuccessState)
                 CustomDriverInfoSheet(
-                  tripStatusModelModel:state.trip,
+                  tripStatusModelModel: state.trip,
                   driverInfoModel:state.driverInfo,
                 )
               else

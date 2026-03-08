@@ -87,7 +87,7 @@ class _RatingState extends State<Rating> {
                     onChanged: (value) {
                       setState(() {
                         cubit.sliderValue = value;
-                        isLoading=false;
+                        isLoading=true;
                       });
                     },
                   ),
@@ -96,7 +96,7 @@ class _RatingState extends State<Rating> {
                 const Spacer(),
 
                 CustomElevatedBtn(
-                  btnName:isLoading==false? "Sending...":"Submit",
+                  btnName:isLoading==false?"Submit":"Sending...",
                   onPressed: () {
 
                     context.read<NormalRideCubit>().sendTripReview(rating:
