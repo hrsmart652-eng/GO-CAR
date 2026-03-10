@@ -7,6 +7,7 @@ import 'package:go_car/core/services/api/end_points.dart';
 import 'package:go_car/features/passenger/normal_ride/model/driver_info_model.dart';
 import 'package:go_car/features/passenger/schedule_ride/model/scheduled_ride_model.dart';
 
+import '../../normal_ride/model/rating_model.dart';
 import '../../normal_ride/model/ride_accepted_model.dart';
 import '../../normal_ride/model/trip_response_model.dart';
 import '../model/new_trip_response_model.dart';
@@ -210,7 +211,9 @@ class ScheduledRideRepository {
     }
   }
 
-  Future<Either<String, DriverInfoModel>> getDriverById({required String driverId}) async {
+  Future<Either<String, DriverInfoModel>> getDriverById({
+    required String driverId,
+  }) async {
     try {
       //final driverId = CacheHelper().getData(key: ApiKeys.driverId);
       final response = await api.get(EndPoint.getDriver(driverId));
@@ -234,4 +237,40 @@ class ScheduledRideRepository {
       return left(error.toString());
     }
   }
+
+
+  Future<Either<String, RatingModel>> sendTripRating({
+    required String? tripId,
+    required int? rating,
+    required String? review,
+  }) async {
+    try {
+      // نفترض إن api.patch بيرجع Map<String,dynamic> مباشرة
+      final response = await api.patch(
+        EndPoint.DriverRate(tripId),
+        data: {"rating": rating, "review": review},
+      );
+
+      if (response == null) {
+        return Left("No response from server");
+      }
+
+      // response هنا Map<String,dynamic> مباشرة
+      final Map<String, dynamic> res = response;
+
+      // جلب Trip من response
+      final RatingModel resRating = RatingModel.fromJson(res);
+
+      if (resRating.trip != null) {
+        debugPrint("Trip Rated Successfully: ${resRating.trip}");
+        return Right(resRating);
+      } else {
+        return Left(resRating.message ?? "Rating failed");
+      }
+    } catch (e) {
+      debugPrint("patchDriverRateTrip Error: $e");
+      return Left(e.toString());
+    }
+  }
+
 }

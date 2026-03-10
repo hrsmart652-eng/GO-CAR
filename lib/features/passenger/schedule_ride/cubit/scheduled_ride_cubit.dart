@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,9 +21,10 @@ import '../../normal_ride/model/visa_bank_model.dart';
 import '../../normal_ride/repository/normal_ride_repo.dart';
 import '../model/new_trip_response_model.dart';
 
-class ScheduledRideCubit extends Cubit<ScheduledRideState> {
+class ScheduledRideCubit extends Cubit<ScheduledRideState>
+    implements RatingCubitInterface {
   ScheduledRideCubit({required this.scheduledRideRepository})
-    : super(ScheduledRideInitial());
+      : super(ScheduledRideInitial());
 
   static ScheduledRideCubit get(context) =>
       BlocProvider.of<ScheduledRideCubit>(context);
@@ -52,6 +52,13 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
   int currentLuggageIndex = 0;
   BankCardModel? selectedVisaCard;
   int selectedVisaIndex = 0;
+  String moreLess = "See more";
+  bool isSeeMore = false;
+  bool isSchdule = false;
+
+  @override
+  double sliderValue = 2;
+
   final ScheduledRideRepository scheduledRideRepository;
   RequestRideRepository? requestRideRepository;
   DriverReviewsRepository? driverReviewsRepository;
@@ -66,38 +73,38 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
   List<BankCardModel> savedVisaCards = [];
   List<BankCardModel> visaCards = [
     BankCardModel(
-      id: 1,
+      id: 0,
       name: "Aareal Bank AG",
       number: "XXXXXXXXX236",
       image: "assets/images/visa.png",
     ),
     BankCardModel(
-      id: 2,
+      id: 1,
       name: "BIGBANK AS Sverige Filial",
       number: "XXXXXXXXX843",
       image: "assets/images/visa1.png",
     ),
     BankCardModel(
-      id: 3,
+      id:2,
       name: "HSBC Continental Europe Bank",
       number: "XXXXXXXXX198",
       image: "assets/images/visa2.png",
     ),
     BankCardModel(
-      id: 4,
+      id:3,
       name: "Barclays Bank Ireland PLC",
       number: "XXXXXXXXX821",
       image: "assets/images/visa3.png",
     ),
     BankCardModel(
-      id: 5,
+      id: 4,
       name: "BNP Paribas S.A., Bankfilial Sverige",
       number: "XXXXXXXXX465",
       image: "assets/images/visa4.png",
     ),
   ];
 
-  Timer? tripTimer;
+  Timer? tripsTimer;
   Timer? tripStatusTimer;
 
   List<Map<String, dynamic>> carsAndNames = [
@@ -105,6 +112,36 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
     {'image': 'assets/images/large_car.svg', 'type': 'Large'},
     {'image': 'assets/images/vip_car.svg', 'type': 'VIP'},
     {'image': 'assets/images/pet_car.svg', 'type': 'Pet'},
+  ];
+
+  @override
+  final List<String> ratingTexts = ['Worst', 'Bad', 'Okay', 'Good', 'Awesome'];
+
+  @override
+  final List<String> ratingDescriptions = [
+    'Worst Experience',
+    'Bad Experience',
+    'Okay Experience',
+    'Good Experience',
+    'Awesome Experience',
+  ];
+
+  @override
+  final List<String> emojiAssets = [
+    'assets/images/worst.png',
+    'assets/images/bad.png',
+    'assets/images/okay.png',
+    'assets/images/good.png',
+    'assets/images/awesome.png',
+  ];
+
+  @override
+  final List<int> colors = [
+    0xffEBEFFF,
+    0xffFEF0C7,
+    0xffC7F1FE,
+    0xffFAD1E0,
+    0xffD1FADF,
   ];
 
   List<TripStatusModel> allTrips = [];
@@ -117,13 +154,10 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
   final DateFormat dateFormat = DateFormat('dd / MM / yyyy HH:mm');
 
   RideType selectedRideType = RideType.oneWay;
-  final clientId = CacheHelper().getData(key: ApiKeys.clientId);
 
   requestRide() async {
     emit(ScheduledRideLoading());
     try {
-      // final userId = CacheHelper().getData(key: ApiKeys.clientId);
-      // scheduledRideResponse?.trip?.userId = userId;
       currentLocation = {
         "type": "Point",
         "coordinates": [31.2357, 30.0444],
@@ -138,11 +172,9 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
         carType: selectedCarType,
         passengerNo: currentPassengersIndex,
         luggageNo: currentLuggageIndex,
-        currentLocation: currentLocation ?? {},
-        destination: destination ?? {},
+        currentLocation: currentLocation,
+        destination: destination,
         scheduledAt: "now",
-        // pickupDateTime?.toIso8601String() ??
-        // DateTime.now().toIso8601String(),
         paymentMethod: paymentMethod,
         rideType: rideOfType ?? "normal",
         price: price ?? 0.0,
@@ -150,94 +182,91 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
       );
 
       result.fold(
-        (error) {
-          emit(ScheduledRideFailure(errMessage: error));
-        },
-        (scheduledRide) {
+            (error) => emit(ScheduledRideFailure(errMessage: error)),
+            (scheduledRide) {
           scheduledRideResponse = scheduledRide;
           CacheHelper().saveData(
             key: ApiKeys.tripId,
             value: scheduledRide.trip?.tripId.toString(),
           );
+          CacheHelper().saveData(
+            key: ApiKeys.clientId,
+            value: scheduledRide.trip?.userId.toString(),
+          );
           debugPrint(
             "================ScheduleRide Cubit ${scheduledRideResponse?.toJson()}====================",
           );
-          //  print('Ride requested successfully: ${normalRideModel.trip}');
           emit(
             ScheduledRideSuccess(scheduledRideResponse: scheduledRideResponse),
           );
-
-          // Navigate to home or other screen
         },
       );
     } catch (e) {
       emit(ScheduledRideFailure(errMessage: 'An error occurred: $e'));
-      print('Login error: $e');
+      debugPrint('Login error: $e');
     }
   }
 
-  Future<List<TripStatusModel>> getAllTripsByClientId() async {
-     final clientId = CacheHelper().getData(key: ApiKeys.clientId);
-    final response = await scheduledRideRepository.getALLTripStatus(id: clientId);
+  getAllTripsByDriverId() async {
+    final driverId = CacheHelper().getData(key: ApiKeys.driverId);
+    final response = await scheduledRideRepository.getALLTripStatus(
+      id: driverId,
+    );
+
     response.fold(
-      (error) => emit(SchduledAllTripFailureState(errorMsg: error.toString())),
-      (trips) async {
-        allTrips = trips;
-        // emit(SchduledAllTripSuccessState(allTrip: allTrips));
-        // get all drivers to check if driver is approved of not ...
-        final driverResponse = await scheduledRideRepository.getAllDrivers();
-        driverResponse.fold(
-              (error) => emit(ScheduledRideFailure(errMessage: error.toString())),
-              (drivers) {
-            for (var trip in allTrips) {
-              for (var driver in drivers) {
-                if (trip.driverId == driver.id) {
-                  allNewTrips.add(trip);
-                }else if(trip.status?.toLowerCase()=="requested"){
-                  allNewTrips.add(trip);
-                }
-                break;
-              }
-            }
-            emit(SchduledAllTripSuccessState(allTrip: allNewTrips));
-          },
-        );
+          (error) => emit(SchduledAllTripFailureState(errorMsg: error.toString())),
+          (trips) {
+        allNewTrips = trips;
+        emit(SchduledAllTripSuccessState(allTrip: allNewTrips));
       },
     );
-    return allTrips;
   }
 
   getDriverInfo() async {
     final driverId = CacheHelper().getData(key: ApiKeys.driverId);
-    //************************* get driver data **************************
     final response = await scheduledRideRepository.getDriverById(
       driverId: driverId,
     );
 
     response.fold(
-      (error) => emit(ScheduledRideFailure(errMessage: error.toString())),
-      (driver) {
+          (error) => emit(ScheduledRideFailure(errMessage: error.toString())),
+          (driver) {
         driverInfoModel = driver;
-        print("Name :${driver.fullName}");
-        // emit(DriverInfoLoadedState(driverInfo:driver));
+        debugPrint("Name :${driver.fullName}");
+        emit(DriverInfoLoadedState(driverInfo: driver));
       },
     );
   }
 
-  Future<void> getDriverReviews() async {
-    // emit(ScheduledRideLoading());
-    final response =
-        await DriverReviewsRepository(
-          api: DioConsumer(dio: Dio()),
-        ).getDriverReviews();
+  getDriverReviews() async {
+    final response = await DriverReviewsRepository(
+      api: DioConsumer(dio: Dio()),
+    ).getDriverReviews();
 
-    response.fold((error) {}, (reviews) {
-      driverReviewsModel = reviews;
-      // emit(TripsReviewsLoaded());
+    response.fold(
+          (error) {},
+          (reviews) {
+        driverReviewsModel = reviews;
+      },
+    );
+  }
+
+  void startListeningAllTrips() {
+    tripsTimer?.cancel();
+    tripsTimer = Timer.periodic(const Duration(seconds: 20), (_) {
+      getAllTripsByDriverId();
     });
   }
 
-  // to get  request new trip in home screen
+  void stopListeningAllTrips() {
+    tripsTimer?.cancel();
+  }
+
+  void toggleSeeMoreLess() {
+    isSeeMore = !isSeeMore;
+    emit(SeeLessMoreState());
+  }
+
   Future<NewTripResponseModel?> getRequestNewTrip() async {
     final clientId = CacheHelper().getData(key: ApiKeys.clientId);
     final tripId = CacheHelper().getData(key: ApiKeys.tripId);
@@ -249,10 +278,8 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
     final response = await scheduledRideRepository.getRequestNewTrips();
 
     response.fold(
-      (error) {
-        emit(ScheduledRideFailure(errMessage: error.toString()));
-      },
-      (trips) {
+          (error) => emit(ScheduledRideFailure(errMessage: error.toString())),
+          (trips) {
         for (var trip in trips) {
           if (trip.id == tripId) {
             foundNewTrip = trip;
@@ -260,6 +287,7 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
             break;
           }
         }
+        isSchdule=true;
         emit(GetNewTripsSuccessState(newTrip: foundNewTrip));
       },
     );
@@ -267,41 +295,28 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
   }
 
   getAcceptNewTrip() async {
-    emit(ScheduledRideLoading());
     final response = await scheduledRideRepository.getTripStatus();
 
     response.fold(
-      (error) => emit(SchduledAllTripFailureState(errorMsg: error.toString())),
-      (trip) {
+          (error) => emit(SchduledAllTripFailureState(errorMsg: error.toString())),
+          (trip) {
         tripAcceptModel = trip;
-        if (trip.status?.toLowerCase() == "accepted") {
-          CacheHelper().saveData(key: ApiKeys.driverId, value: trip.driverId);
-          // getDriverInfo(driverId: trip.driverId!);
-          // fetchData();
+        CacheHelper().saveData(key: ApiKeys.driverId, value: trip.driverId);
+        if (trip.status?.toLowerCase() == "accepted" ||
+            trip.status?.toLowerCase() == "completed") {
+          debugPrint(
+            "***********Trip Status: ${trip.status} : Driver ID ${trip.driverId}*****************",
+          );
           emit(SchduledTripSuccessState(tripAccepted: trip));
           stopListeningTripAccept();
         }
-        emit(SchduledTripSuccessState(tripAccepted: trip));
       },
     );
   }
 
-  // Future<Either<String, List<TripStatusModel>>> getAllNewTrips() async {
-  //   final clientId = CacheHelper().getData(key: ApiKeys.clientId);
-  //   Future<List<TripStatusModel>> clientTripRes = getAllTripsById(id: clientId);
-  //   clientTripRes.fold(
-  //     (error) => emit(ScheduledRideFailure(errMessage: error.toString())),
-  //     (trips) async {
-  //
-  //     },
-  //   );
-  // }
-
-  //*******************Trip Status Listing *****************
   void startListeningTripAccept() {
     tripStatusTimer?.cancel();
-
-    tripStatusTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+    tripStatusTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       getAcceptNewTrip();
     });
   }
@@ -310,57 +325,11 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
     tripStatusTimer?.cancel();
   }
 
-  // // fetchData() async {
-  // //   await getRequestNewTrips();
-  // //   await getTripStatus();
-  // // }
-  // changeNewTripAccepted() async {
-  //   if (foundNewTrip == null) {
-  //     await getRequestNewTrip();
-  //     return;
-  //   }
-  //   final status = foundNewTrip!.status?.toLowerCase();
-  //
-  //   if (status == "accepted") {
-  //     await getAcceptNewTrip();
-  //   } else {
-  //     await getRequestNewTrips();
-  //   }
-  // }
-
-  fetchData() async {
-    final driverId = CacheHelper().getData(key: ApiKeys.driverId);
-    await getDriverReviews(); // driver reviews
-    await getAllTripsByClientId(); //all trips related to driver
-    await getDriverInfo(); // get driver data
+  fetchDriverData() async {
+    await getDriverReviews();
+    await getAllTripsByDriverId();
+    await getDriverInfo();
   }
-
-  // void startCheckingTripStatus() {
-  //   //  emit(SchduledTripLoadingState());
-  //
-  //   tripTimer?.cancel();
-  //
-  //   tripTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
-  //     final response = await scheduledRideRepository.getALLTripStatus(
-  //       id: clientId,
-  //     );
-  //
-  //     response.fold(
-  //       (failure) {
-  //         emit(SchduledAllTripFailureState(errorMsg: failure));
-  //       },
-  //       (trips) {
-  //         allTrips = trips;
-  //
-  //         emit(SchduledAllTripSuccessState(allTrip: List.from(allTrips)));
-  //       },
-  //     );
-  //   });
-  // }
-  //
-  // void stopCheckingTripStatus() {
-  //   tripTimer?.cancel();
-  // }
 
   cancelRide({required String tripId}) async {
     emit(ScheduledRideLoading());
@@ -370,22 +339,27 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
     }
     final response = await scheduledRideRepository.cancelTrip(tripId: tripId);
     response.fold(
-      (errorMessage) => emit(ScheduledRideFailure(errMessage: errorMessage)),
-      (schduledRide) => emit(
-        CancelScheduledRideSuccess(tripId: scheduledRideResponse?.trip?.tripId),
-      ),
+          (errorMessage) => emit(ScheduledRideFailure(errMessage: errorMessage)),
+          (schduledRide) {
+        resetTrip();
+        emit(
+          CancelScheduledRideSuccess(
+            tripId: scheduledRideResponse?.trip?.tripId,
+          ),
+        );
+      },
     );
   }
 
   void changeRideType(RideType rideType) {
     selectedRideType = rideType;
-
     if (rideType == RideType.oneWay) {
       rideOfType = "normal";
+      CacheHelper().saveData(key: ApiKeys.rideType, value: "normal");
     } else {
       rideOfType = "return";
+      CacheHelper().saveData(key: ApiKeys.rideType, value: "return");
     }
-
     emit(ChangeRideTypeState());
   }
 
@@ -402,7 +376,6 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
 
   changeLuggageIndex({required int index}) {
     currentLuggageIndex = index;
-
     emit(ChangeLuggageIndexState());
   }
 
@@ -462,16 +435,13 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
     emit(ReturnTime());
   }
 
-  // return extimated time
   double getEstimatedTime(double? distanceKm) {
     const double avgSpeed = 40;
     if (distanceKm == null || distanceKm == 0) return 0.0;
-
     return (distanceKm / avgSpeed) * 60;
   }
 
   choosePaymentMethod({required String paymentMethod}) {
-    // this.paymentMethod = paymentMethod ?? "";
     this.paymentMethod = paymentMethod;
     emit(ChoosePaymentMethodSchduleState());
   }
@@ -483,26 +453,54 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState> {
   }
 
   selectVisaBank({required int index}) {
+    if (index < 0 || index >= visaCards.length) return;
     selectedVisaIndex = index;
+    selectedVisaCard = visaCards[index];
     emit(SchduleSelectedVisaIndex());
   }
 
   saveVisaBankCards({required BankCardModel card}) {
-    if (savedVisaCards.contains(card)) {
-      return;
-    } else {
+    final alreadyExists = savedVisaCards.any((c) => c.id == card.id);
+    if (!alreadyExists) {
       savedVisaCards.add(card);
     }
-    emit(SchduleSavedVisaState(cards: visaCards));
+    emit(SchduleSavedVisaState(cards: savedVisaCards));
   }
 
-  resetTrip() {
-    // currentLocationCon.clear();
-    // destinationCon.clear();
+  @override
+  void resetTrip() {
+    foundNewTrip = null;
+    tripAcceptModel = null;
+    currentLocationCon.clear();
+    destinationCon.clear();
     currentCarIndex = 0;
     currentLuggageIndex = 0;
+    returnTime = null;
+    pickupDateTime = null;
+    selectedRideType = RideType.oneWay;
+    selectedCarType = carsAndNames[0]["type"];
     currentPassengersIndex = 1;
     paymentMethod = "";
+    CacheHelper().clearData(key: ApiKeys.rideType);
+    CacheHelper().clearData(key: ApiKeys.tripId);
     emit(SchduleResetTripState());
+  }
+
+  @override
+  Future<void> sendTripReview({
+    required int rating,
+    required String review,
+  }) async {
+    emit(ScheduledRideLoading());
+    final tripId = tripAcceptModel?.id.toString();
+    final response = await scheduledRideRepository.sendTripRating(
+      tripId: tripId,
+      rating: rating,
+      review: review,
+    );
+    response.fold(
+          (errorMsg) => emit(ScheduledRideFailure(errMessage: errorMsg.toString())),
+          (rate) => emit(SchduleReviewSuccessState(rateModel: rate)),
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:go_car/features/passenger/normal_ride/model/ride_accepted_model.
 import 'package:go_car/features/passenger/normal_ride/model/visa_bank_model.dart';
 import 'package:go_car/features/passenger/schedule_ride/model/new_trip_response_model.dart';
 
+import '../../normal_ride/model/rating_model.dart';
 import '../model/scheduled_ride_model.dart';
 
 class ScheduledRideState {}
@@ -67,12 +68,20 @@ final class SchduledAllTripSuccessState extends ScheduledRideState {
 
   SchduledAllTripSuccessState({required this.allTrip});
 }
+final class SchduledAcceptedTripSuccessState extends ScheduledRideState {
+  TripStatusModel tripAccept;
+  DriverInfoModel driverInfo;
+  SchduledAcceptedTripSuccessState({required this.tripAccept,required this.driverInfo});
+}
 
 final class GetNewTripsSuccessState extends ScheduledRideState {
   NewTripResponseModel? newTrip;
 
   GetNewTripsSuccessState({required this.newTrip});
 }
+
+final class SeeLessMoreState extends ScheduledRideState {}
+
 
 final class SchduleSavedVisaState extends ScheduledRideState {
   List<BankCardModel> cards = [];
@@ -86,4 +95,10 @@ final class DriverInfoLoadedState extends ScheduledRideState {
   DriverInfoModel driverInfo;
   DriverInfoLoadedState({required this.driverInfo});
 }
+final class SchduleReviewSuccessState extends ScheduledRideState {
+  RatingModel rateModel;
+  SchduleReviewSuccessState({required this.rateModel});
+
+}
+
 

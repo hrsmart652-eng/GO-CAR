@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_car/core/routing/routes.dart';
 
+import '../../../../core/database/cache/cache_helper.dart';
+import '../../../../core/services/api/end_points.dart';
 import '../cubit/scheduled_ride_cubit.dart';
 import '../cubit/scheduled_ride_state.dart';
 
@@ -17,15 +20,22 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScheduledRideCubit>().fetchData();
-      context.read<ScheduledRideCubit>().getDriverInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+     await context.read<ScheduledRideCubit>().fetchDriverData();
+      context.read<ScheduledRideCubit>().startListeningTripAccept();
     });
   }
 
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduledRideCubit, ScheduledRideState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is SchduledTripSuccessState){
+         if(state.tripAccepted.status?.toLowerCase()=="completed"){
+
+           Navigator.pushNamed(context, Routes.scheduledRating);
+         }
+        }
+      },
       builder: (context, state) {
         final cubit = ScheduledRideCubit.get(context);
         final trip =
@@ -36,8 +46,10 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
             state is DriverInfoLoadedState
                 ? state.driverInfo
                 : cubit.driverInfoModel;
-        //  DriverReviewsModel driverReview =cubit.driverReviewsRepository?.getDriverReviews();
+        final rating =cubit.driverReviewsModel;
+        final allTrips=state is SchduledAllTripSuccessState?state.allTrip:cubit.allNewTrips;
         final img = driver?.image ?? "";
+        final rideType=CacheHelper().getData(key:ApiKeys.rideType);
         return SafeArea(
           child: Scaffold(
             backgroundColor: Colors.white,
@@ -90,7 +102,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                                   vertical: 3.h,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Color(0xffE8FFF2),
                                   borderRadius: BorderRadius.circular(6.r),
                                   boxShadow: [
                                     BoxShadow(
@@ -101,7 +113,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                                   ],
                                 ),
                                 child: Text(
-                                  '${trip?.trip?.carType}',
+                                  'Accepted',
                                   style: TextStyle(
                                     fontSize: 11.sp,
                                     fontWeight: FontWeight.w700,
@@ -136,7 +148,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  '${cubit.driverReviewsModel?.averageRating}',
+                                  '${rating?.averageRating.split('.')[0]}.0',
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w400,
@@ -145,7 +157,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                                 ),
                                 SizedBox(width: 8.w),
                                 Text(
-                                  '${cubit.allTrips.length} rides',
+                                  '${allTrips.length} rides',
                                   style: TextStyle(
                                     fontSize: 10.sp,
                                     fontWeight: FontWeight.w500,
@@ -156,7 +168,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                             ),
                             SizedBox(height: 10.h),
                             Text(
-                              'Nissan juke ب ن م 1232',
+                              '${trip?.trip?.carType}',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
@@ -180,13 +192,15 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Row(
-                      //---------------- Column with date and time ---------------
                       children: [
+                        // --------- Pickup Date & Time ---------
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${cubit.pickupDateTime?.day}/${cubit.pickupDateTime?.month}/ ${cubit.pickupDateTime?.year}',
+                              cubit.pickupDateTime != null
+                                  ? '${cubit.pickupDateTime!.day}/${cubit.pickupDateTime!.month}/${cubit.pickupDateTime!.year}'
+                                  : '--/--/----',
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -195,7 +209,9 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                             ),
                             SizedBox(height: 10.h),
                             Text(
-                              '${cubit.pickupDateTime?.hour}:${cubit.pickupDateTime?.minute} ${cubit.pickupDateTime?.timeZoneName}',
+                              cubit.pickupDateTime != null
+                                  ? '${cubit.pickupDateTime!.hour % 12 == 0 ? 12 : cubit.pickupDateTime!.hour % 12}:${cubit.pickupDateTime!.minute.toString().padLeft(2, '0')} ${cubit.pickupDateTime!.hour >= 12 ? "PM" : "AM"}'
+                                  : "--:--",
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
@@ -204,29 +220,71 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                             ),
                           ],
                         ),
+
                         Spacer(),
-                        // -----------------------  2 Icons
-                        Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: BoxDecoration(
-                            color: Color(0xffEAECF0),
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
-                          child: Column(
+
+                        // --------- الأيقونة في المنتصف ---------
+                        if (rideType=="return")
+                          Container(
+                            padding: EdgeInsets.all(4.w),
+                            decoration: BoxDecoration(
+                              color: Color(0xffEAECF0),
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/svgs/return.svg",
+                              fit: BoxFit.fill,
+                              height: 32.h,
+                              width: 32.w,
+                            ),
+                          )
+                        else
+                          SizedBox(),
+
+                        Spacer(),
+
+                        // --------- Return Date & Time أو فراغ ---------
+                        if (rideType=="return")
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.car_crash,
-                                color: Color(0xff121212),
-                                size: 20.sp,
+                              Text(
+                                cubit.pickupDateTime != null
+                                    ? '${cubit.pickupDateTime!.day}/${cubit.pickupDateTime!.month}/${cubit.pickupDateTime!.year}'
+                                    : '--/--/----',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff0D3244),
+                                ),
                               ),
-                              Icon(
-                                Icons.arrow_forward_sharp,
-                                color: Color(0xff121212),
-                                size: 20.sp,
+                              SizedBox(height: 10.h),
+                              Text(
+                                cubit.returnTime != null
+                                    ? '${cubit.returnTime!.hour % 12 == 0 ? 12 : cubit.returnTime!.hour % 12}:${cubit.returnTime!.minute.toString().padLeft(2, '0')} ${cubit.returnTime!.hour >= 12 ? "PM" : "AM"}'
+                                    : "--:--",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff344054),
+                                ),
                               ),
                             ],
-                          ),
-                        ),
+                          )
+                        else
+                          Container(
+                            padding: EdgeInsets.all(4.w),
+                            decoration: BoxDecoration(
+                              color: Color(0xffEAECF0),
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/svgs/noun-round-trip-flight-1211382 2.svg",
+                              fit: BoxFit.fill,
+                              height: 32.h,
+                              width: 32.w,
+                            ),
+                          ), // one-way مفيش return time
                       ],
                     ),
                   ),
@@ -420,7 +478,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'Payment',
+                      'Payment Method',
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -431,7 +489,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                   SizedBox(height: 10.h),
                   // 6. Row with background
                   Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16.h),
+                    margin: EdgeInsets.symmetric(horizontal: 8.h),
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
                       color: Color(0xFFFCFCFD),
@@ -442,7 +500,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                         Row(
                           children: [
                             Text(
-                              'Total fare:',
+                              'Down-Payment: ',
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w600,
@@ -455,7 +513,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xff183E91),
+                                color: Color(0xff266FFF),
                               ),
                             ),
                           ],
@@ -463,10 +521,11 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
                         Spacer(),
                         Row(
                           children: [
-                            Icon(Icons.payment, color: Color(0XFF183E91)),
+                            //Icon(Icons.payment, color: Color(0XFF183E91)),
+                            SvgPicture.asset("assets/svgs/pepicons-print_credit-card.svg",fit:BoxFit.fill,height:20.h,width:20.w,),
                             SizedBox(width: 8),
                             Text(
-                              'Credit Card',
+                              '${cubit.tripAcceptModel?.paymentInfo?.method?.toLowerCase()=="cash"?"Cash":"Credit Card" }',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,

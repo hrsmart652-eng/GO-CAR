@@ -11,7 +11,6 @@ class NewTripResponseModel {
   final double? price;
   final String? tripCode;
   final String? status;
-
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
