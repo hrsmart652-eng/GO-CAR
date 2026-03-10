@@ -328,7 +328,7 @@ class _RideEndedState extends State<RideEnded> {
                                 btnSize: Size(double.infinity, 50.h),
                                 btnName: "Rating",
                                 onPressed: () {
-                                  Navigator.pushNamed(context, Routes.rating);
+                                  Navigator.pushNamed(context, Routes.normalRating);
                                 },
                               ),
                             ],

@@ -12,16 +12,8 @@ import '../../normal_ride/widgets/wallet_type_ride_cart.dart';
 import '../widgets/saved_bank_cards.dart';
 
 
-class NormalPaymentScreen extends StatefulWidget {
+class NormalPaymentScreen extends StatelessWidget {
   const NormalPaymentScreen({super.key});
-
-  @override
-  State<NormalPaymentScreen> createState() => _NormalPaymentScreenState();
-}
-
-class _NormalPaymentScreenState extends State<NormalPaymentScreen> {
-  bool isCash = false;
-  bool isCredit = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,19 +33,19 @@ class _NormalPaymentScreenState extends State<NormalPaymentScreen> {
 
       builder: (context, state) {
         final normalCubit = NormalRideCubit.get(context);
+        final isCash = normalCubit.paymentMethod == 'cash';
+        final isCredit = normalCubit.paymentMethod == 'credit';
+        final isLoading = state is RequestRideLoading;
         return Scaffold(
-          appBar: customAppBar(title: ''),
+          appBar: customAppBar(title: '', isBack: true),
           backgroundColor: Colors.white,
-
           body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-
                   WalletTypeRideCart(
                     image: "assets/images/noun-cash.svg",
-
                     walletType: WalletTypeNormalRide(
                       isCash: isCash,
                       typeWallet: 'Cash',
@@ -61,65 +53,41 @@ class _NormalPaymentScreenState extends State<NormalPaymentScreen> {
                       instruction:
                       "If there is a traffic jam the estimated price will increase",
                     ),
-
                     context: context,
                     isCach: isCash,
-
-                    walletOnTap: () {
-                      setState(() {
-                        isCash = true;
-                        isCredit = false;
-                        normalCubit.choosePaymentMethod(paymentMethod: 'cash',
-                        );
-                      });
-                    },
+                    walletOnTap: () =>
+                        normalCubit.choosePaymentMethod(paymentMethod: 'cash'),
                   ),
 
                   SizedBox(height: 20.h),
 
-                  /// CREDIT
                   WalletTypeRideCart(
                     image: "assets/svgs/credit-card.svg",
-
                     walletType: WalletTypeNormalRide(
                       isCash: isCredit,
                       typeWallet: 'Credit Card',
                       price: '(10+1 SEK)',
-                      instruction:
-                      "We will take 1 SEK until ride finished",
+                      instruction: "We will take 1 SEK until ride finished",
                     ),
-
                     context: context,
                     isCach: isCredit,
-
-                    walletOnTap: () {
-                      setState(() {
-                        isCash = false;
-                        isCredit = true;
-
-                        normalCubit.choosePaymentMethod(
-                          paymentMethod: 'credit',
-                        );
-                      });
-                    },
+                    walletOnTap: () =>
+                        normalCubit.choosePaymentMethod(paymentMethod: 'credit'),
                   ),
 
                   SizedBox(height: 20.h),
 
-                  /// SAVED CARDS
                   isCredit
                       ?  SavedBankCards()
                       : SizedBox(height: 250.h),
 
                   SizedBox(height: 20.h),
 
-                  /// PAY BUTTON
-                 state is RequestRideLoading?CircularProgressIndicator(): CustomElevatedBtn(
+                  isLoading
+                      ? const CircularProgressIndicator()
+                      : CustomElevatedBtn(
                     btnName: "Pay",
-
                     onPressed: () async {
-
-                      /// VALIDATION
                       if (!isCash && !isCredit) {
                         showSnackBar(
                           context,
@@ -127,12 +95,20 @@ class _NormalPaymentScreenState extends State<NormalPaymentScreen> {
                         );
                         return;
                       }
+                      if (isCredit && normalCubit.selectedVisaCard == null) {
+                        showSnackBar(
+                          context,
+                          message: "Please select a card",
+                        );
+                        return;
+                      }
                       await normalCubit.requestRide();
 
-                      Navigator.pushNamed(
-                        context,
-                        Routes.findDriver,
-                      );
+                        Navigator.pushNamed(
+                          context,
+                          Routes.findDriver,
+                        );
+
                     },
                   ),
                 ],

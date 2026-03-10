@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_car/core/routing/routes.dart';
 import 'package:go_car/features/passenger/schedule_ride/views/payment_screen.dart';
 import 'package:go_car/features/passenger/schedule_ride/views/request_sent_screen.dart';
@@ -42,7 +43,10 @@ import '../../features/passenger/home/views/notifications.dart';
 import '../../features/passenger/home/views/payment_method.dart';
 import '../../features/passenger/home/views/rating.dart';
 import '../../features/passenger/home/views/ride_ended.dart';
+import '../../featimport ../../features/passenger/normal_ride/cubit/normal_ride_state.dart';
 import '../../features/passenger/home/views/show_price.dart';
+import '../../features/passenger/normal_ride/cubit/normal_ride_cubit.dart';
+import '../../features/passenger/normal_ride/cubit/normal_ride_state.dart';
 import '../../features/passenger/normal_ride/widgets/search_location.dart';
 import '../../features/passenger/onboarding/onboarding_screen.dart';
 import '../../features/passenger/profile/views/edit_profile_screen.dart';
@@ -51,6 +55,8 @@ import '../../features/passenger/profile/views/profile_screen.dart';
 import '../../features/passenger/profile/views/reviews.dart';
 import '../../features/passenger/profile/views/settings_screen.dart';
 import '../../features/passenger/profile/views/support_screen.dart';
+import '../../features/passenger/schedule_ride/cubit/scheduled_ride_cubit.dart';
+import '../../features/passenger/schedule_ride/cubit/scheduled_ride_state.dart';
 import '../../features/passenger/schedule_ride/views/passenger_schedule_ride.dart';
 
 class AppRouter {
@@ -179,9 +185,46 @@ class AppRouter {
             isNormalRide:isNormal,
           ),
         );
-      case Routes.rating:
-        return MaterialPageRoute(builder: (_) => Rating());
 
+      case Routes.normalRating:
+        return MaterialPageRoute(
+          builder: (_) => BlocConsumer<NormalRideCubit, RequestRideState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return Rating(
+                cubit: NormalRideCubit.get(context),
+                isSuccess: state is ReviewSuccessState,
+                isFailure: state is RequestRideFailure,
+                successMessage: state is ReviewSuccessState
+                    ? state.rateModel.message
+                    : null,
+                errorMessage: state is RequestRideFailure
+                    ? state.errMessage
+                    : null,
+              );
+            },
+          ),
+        );
+
+      case Routes.scheduledRating:
+        return MaterialPageRoute(
+          builder: (_) => BlocConsumer<ScheduledRideCubit, ScheduledRideState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              return Rating(
+                cubit: ScheduledRideCubit.get(context),
+                isSuccess: state is SchduleReviewSuccessState,
+                isFailure: state is ScheduledRideFailure,
+                successMessage: state is SchduleReviewSuccessState
+                    ? state.rateModel.message
+                    : null,
+                errorMessage: state is ScheduledRideFailure
+                    ? state.errMessage
+                    : null,
+              );
+            },
+          ),
+        );
       case Routes.rideEnded:
         return MaterialPageRoute(builder: (_) => RideEnded());
 

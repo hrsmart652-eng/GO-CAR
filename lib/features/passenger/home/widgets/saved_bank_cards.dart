@@ -37,20 +37,21 @@ class SavedBankCards extends StatelessWidget {
                         fontSize: 16.sp,
                         letterSpacing: 0,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xff121212),
+                        color: const Color(0xff121212),
                       ),
                     ),
-                    Spacer(),
-
+                    const Spacer(),
                     GestureDetector(
-                      onTap:() {
+                      onTap: () {
                         Navigator.pushNamed(
                           context,
                           Routes.addNewCard,
                           arguments: {
-                            'onPaymentChosen':
-                                (){
-                              Navigator.pushNamed(context,Routes.normalPayment);
+                            'onPaymentChosen': () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.schdulePayment,
+                              );
                             },
                             'isNormal': true,
                           },
@@ -58,7 +59,7 @@ class SavedBankCards extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.add,
                             color: Color.fromARGB(255, 104, 107, 112),
                           ),
@@ -69,7 +70,7 @@ class SavedBankCards extends StatelessWidget {
                               fontFamily: "Cairo",
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xff266FFF),
+                              color: const Color(0xff266FFF),
                             ),
                           ),
                         ],
@@ -80,23 +81,27 @@ class SavedBankCards extends StatelessWidget {
                 SizedBox(height: 15.h),
                 SizedBox(
                   height: 200.h,
-                  child: ListView.builder(
-                    itemCount: cubit.savedVisaCards.length,
+                  child: cubit.visaCards.isEmpty
+                      ? const Center(child: Text("No saved cards"))
+                      : ListView.builder(
+                    itemCount: cubit.visaCards.length,
                     itemBuilder: (context, index) {
+                      final card = cubit.visaCards[index];
+                      final isSelected =
+                          cubit.selectedVisaCard?.id == card.id;
+
                       return AddVisaContainer(
                         image: Image.asset(
-                          "${cubit.visaCards[index].image}",
+                          card.image ?? '',
                           width: 38.w,
                           height: 38.h,
                         ),
-                        text: "${cubit.visaCards[index].name}",
-                        number: "${cubit.visaCards[index].number}",
-                        index: cubit.visaCards[index].id!,
-                        isSelected:
-                            cubit.selectedVisaCard?.id ==
-                            cubit.visaCards[index].id,
-                        onSelect: (index) {
-                          cubit.selectVisaBank(index: index);
+                        text: card.name ?? '',
+                        number: card.number ?? '',
+                        index: index,
+                        isSelected: isSelected,
+                        onSelect: (selectedIndex) {
+                          cubit.selectVisaBank(index: selectedIndex);
                         },
                       );
                     },

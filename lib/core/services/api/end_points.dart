@@ -144,6 +144,7 @@ class ApiKeys {
   static String currentLocation = "currentLocation";
   static String destination = "destination";
   static String carTypeImg = "carTypeImg";
+  static String rideType = "rideType";
   static String date = "date";
   static String allTSchdulerips = "allScheduleTrips";
 }

@@ -9,6 +9,7 @@ import 'package:go_car/features/passenger/normal_ride/model/driver_info_model.da
 import 'package:go_car/features/passenger/normal_ride/model/trip_response_model.dart';
 import 'package:go_car/features/passenger/profile/model/client_model.dart';
 
+import '../../../../config/environment.dart';
 import '../../../../core/database/cache/cache_helper.dart';
 import '../../../../core/services/api/end_points.dart';
 import '../../../driver/profile/models/driver_reviews_model.dart';
@@ -18,7 +19,7 @@ import '../model/visa_bank_model.dart';
 import '../repository/normal_ride_repo.dart';
 import 'normal_ride_state.dart';
 
-class NormalRideCubit extends Cubit<RequestRideState> {
+class NormalRideCubit extends Cubit<RequestRideState>  implements RatingCubitInterface {
   NormalRideCubit({required this.requestRideRepository})
     : super(RequestRideInitial()) {
     fetchData();
@@ -337,17 +338,18 @@ class NormalRideCubit extends Cubit<RequestRideState> {
   }
 
   selectVisaBank({required int index}) {
+    if (index < 0 || index >= visaCards.length) return;
     selectedVisaIndex = index;
+    selectedVisaCard = visaCards[index];
     emit(SelectedVisaIndexdState());
   }
 
   saveVisaBankCards({required BankCardModel card}) {
-    if (savedVisaCards.contains(card)) {
-      return;
-    } else {
+    final alreadyExists = savedVisaCards.any((c) => c.id == card.id);
+    if (!alreadyExists) {
       savedVisaCards.add(card);
     }
-    emit(VisaBankAddedState(cards: visaCards));
+    emit(VisaBankAddedState(cards: savedVisaCards));
   }
 
   removeVisaBankCard({required int id}) {
@@ -413,13 +415,14 @@ class NormalRideCubit extends Cubit<RequestRideState> {
   }
 
   resetTrip() {
-    // normalRide = null;
-    // currentLocationCon.clear();
-    // destinationCon.clear();
+    normalRide = null;
+    currentLocationCon.clear();
+    destinationCon.clear();
     currentCarIndex = 0;
     currentLuggageIndex = 0;
     currentPassengersIndex = 1;
     paymentMethod = "";
+    CacheHelper().clearData(key:ApiKeys.rideType);
     emit(ResetTripState());
   }
 

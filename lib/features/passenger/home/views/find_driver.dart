@@ -117,7 +117,7 @@ class _FindDriverState extends State<FindDriver> {
                     height: 170.h,
                     context: context,
                     normalCubit: cubit,
-                    isNormalRide: false,
+                    isNormalRide: true,
                   ),
                 ),
             ],

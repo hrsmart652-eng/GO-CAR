@@ -63,6 +63,8 @@ class Routes {
   static const String schdulePayment = '/schdulePayment';
   static const String searchLocationScreen = '/searchLocationScreen';
   static const String schduleHome = '/schduleScreen';
+  static const String normalRating = '/normalRating';
+  static const String scheduledRating = '/scheduledRating';
   static const String requestSendScreen = '/requestSendScreen';
   static const String seeLessSchduleTrans = '/seeLessScheduleTrans';
 }

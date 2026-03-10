@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../routing/routes.dart';
+
 Future<void> confirmationDeleteDialog(
   BuildContext context, {
   required String text,
   required String title,
   required Future<void>? Function() onPressed,
-
 }) {
   bool isLoading = false;
 
@@ -83,22 +84,22 @@ Future<void> confirmationDeleteDialog(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed:
+                          // confirmation_delete_dialog.dart
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                            setState(() {
+                              isLoading = true; // أولاً
+                            });
+
+                            await onPressed(); // بس، من غير .then
+
+                            if (context.mounted) {
+                              Navigator.pop(context); // إغلاق الدايلوج بس
+                            }
+                          },
+                          child:
                               isLoading
-                                  ? null
-                                  : () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-
-                                    await onPressed();
-
-                                    await Future.delayed(
-                                      Duration(milliseconds: 10),
-                                    );
-                                    Navigator.pop(context);
-                                  },
-                          child:isLoading
                                   ? SizedBox(
                                     height: 20,
                                     width: 20,
@@ -106,7 +107,8 @@ Future<void> confirmationDeleteDialog(
                                       color: Colors.white,
                                       strokeWidth: 2,
                                     ),
-                                  ): Text(
+                                  )
+                                  : Text(
                                     'Yes',
                                     style: TextStyle(
                                       fontSize: 16,
