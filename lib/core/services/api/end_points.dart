@@ -125,6 +125,7 @@ class ApiKeys {
   static String id = "id";
   static String clientId = "clientId";
   static String driverId = "driverId";
+  static String userId = "userId";
   static String shiftId = "_id";
   static String rating = "rating";
   static String comment = "comment";

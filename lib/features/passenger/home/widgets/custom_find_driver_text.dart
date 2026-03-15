@@ -169,7 +169,7 @@ class _CustomFindDriverRequestCancelState
     final tripId = CacheHelper().getData(key: ApiKeys.tripId).toString();
 
     await widget.normalCubit?.cancelRide(tripId);
-    widget.normalCubit?.resetTrip();
+   // widget.normalCubit?.resetTrip();
 
   }
 

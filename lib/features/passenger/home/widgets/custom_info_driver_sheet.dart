@@ -33,7 +33,6 @@ class _CustomDriverInfoSheetState extends State<CustomDriverInfoSheet> {
   @override
   void initState() {
     super.initState();
-    final tripId = CacheHelper().getData(key: ApiKeys.tripId);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NormalRideCubit>().startCheckingTripStatus();
     });
@@ -74,7 +73,7 @@ class _CustomDriverInfoSheetState extends State<CustomDriverInfoSheet> {
                 return SingleChildScrollView(
                   controller: scrollController,
                   child: SizedBox(
-                    height: 450.h,
+                    height: 420.h,
                     child: Stack(
                       children: [
                         Container(height: 50.h),
@@ -85,7 +84,7 @@ class _CustomDriverInfoSheetState extends State<CustomDriverInfoSheet> {
                           left: 0,
                           right: 0,
                           child: Container(
-                            height: 400.h,
+                            height: 380.h,
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             decoration: const BoxDecoration(
                               color: Colors.white,
@@ -260,7 +259,7 @@ class _CustomDriverInfoSheetState extends State<CustomDriverInfoSheet> {
 
                                       await cubit.cancelRide(tripId);
 
-                                      cubit.resetTrip();
+                                     // cubit.resetTrip();
 
                                       Navigator.pushNamed(context, Routes.home);
                                     },

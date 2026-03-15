@@ -219,7 +219,8 @@ class RequestRideRepository {
     try {
       final tripId = CacheHelper().getData(key: ApiKeys.tripId);
       final clientId = CacheHelper().getData(key: ApiKeys.clientId);
-      final clientTripsResponse = await api.get(EndPoint.getTrip(clientId));
+      final userId = CacheHelper().getData(key: ApiKeys.userId);
+      final clientTripsResponse = await api.get(EndPoint.getTrip(clientId??userId));
 
       final clientTripRes = clientTripsResponse["trips"] as List<dynamic>;
 

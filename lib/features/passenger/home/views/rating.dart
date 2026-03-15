@@ -44,7 +44,6 @@ class _RatingScreenState extends State<Rating> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(widget.successMessage ?? "Rated Successfully")),
         );
-        CacheHelper().saveData(key:ApiKeys.clientId, value:CacheHelper().getData(key:ApiKeys.id));
         Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.home,

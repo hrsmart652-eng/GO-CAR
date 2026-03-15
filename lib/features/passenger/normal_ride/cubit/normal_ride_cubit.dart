@@ -236,7 +236,7 @@ class NormalRideCubit extends Cubit<RequestRideState>  implements RatingCubitInt
   void startCheckingTripStatus() {
     tripTimer?.cancel();
 
-    tripTimer = Timer.periodic(const Duration(minutes:1), (_) async {
+    tripTimer = Timer.periodic(const Duration(seconds:20), (_) async {
       final driverId = CacheHelper().getData(key: ApiKeys.driverId);
 
       final tripResponse =
@@ -284,7 +284,8 @@ class NormalRideCubit extends Cubit<RequestRideState>  implements RatingCubitInt
                       ),
                     );
                     stopCheckingTripStatus();
-                  } else if (status == "completed") {
+                  }
+                  if (status == "completed") {
                     emit(
                       AllTripsSuccessState(
                         trip: trip,
@@ -415,14 +416,12 @@ class NormalRideCubit extends Cubit<RequestRideState>  implements RatingCubitInt
   }
 
   resetTrip() {
-    normalRide = null;
     currentLocationCon.clear();
     destinationCon.clear();
     currentCarIndex = 0;
     currentLuggageIndex = 0;
     currentPassengersIndex = 1;
     paymentMethod = "";
-    CacheHelper().clearData(key:ApiKeys.rideType);
     emit(ResetTripState());
   }
 

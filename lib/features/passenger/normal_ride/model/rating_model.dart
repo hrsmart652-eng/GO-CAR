@@ -11,7 +11,7 @@ class RatingModel {
 
   factory RatingModel.fromJson(Map<String, dynamic> json) {
     return RatingModel(
-      message: json['message']?.toString(),
+      message: json['message']??"",
       trip: json['trip'] != null && json['trip'] is Map<String, dynamic>
           ? TripStatusModel.fromJson(json['trip'])
           : null,

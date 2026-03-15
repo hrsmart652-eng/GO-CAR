@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -301,7 +300,7 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState>
           (error) => emit(SchduledAllTripFailureState(errorMsg: error.toString())),
           (trip) {
         tripAcceptModel = trip;
-        CacheHelper().saveData(key: ApiKeys.driverId, value: trip.driverId);
+        CacheHelper().saveData(key: ApiKeys.driverId, value: trip.driverId??"");
         if (trip.status?.toLowerCase() == "accepted" ||
             trip.status?.toLowerCase() == "completed") {
           debugPrint(
@@ -469,20 +468,16 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState>
 
   @override
   void resetTrip() {
-    foundNewTrip = null;
-    tripAcceptModel = null;
     currentLocationCon.clear();
     destinationCon.clear();
     currentCarIndex = 0;
     currentLuggageIndex = 0;
-    returnTime = null;
-    pickupDateTime = null;
+    returnTime =null;
+    pickupDateTime =null;
     selectedRideType = RideType.oneWay;
     selectedCarType = carsAndNames[0]["type"];
     currentPassengersIndex = 1;
     paymentMethod = "";
-    CacheHelper().clearData(key: ApiKeys.rideType);
-    CacheHelper().clearData(key: ApiKeys.tripId);
     emit(SchduleResetTripState());
   }
 

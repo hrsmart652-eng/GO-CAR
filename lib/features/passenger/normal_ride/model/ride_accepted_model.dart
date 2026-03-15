@@ -38,16 +38,16 @@ class TripStatusModel {
   // From JSON
   factory TripStatusModel.fromJson(Map<String, dynamic> json) {
     return TripStatusModel(
-      id: json['_id']?.toString(),
-      client: json['client']?.toString(),
-      carType: json['carType']?.toString(),
-      passengerNo: json['passengerNo'],
-      luggageNo: json['luggageNo'],
+      id: json['_id']??"",
+      client: json['client']??"",
+      carType: json['carType']??"",
+      passengerNo: json['passengerNo']??1,
+      luggageNo: json['luggageNo']??0,
       scheduledAt: json['scheduledAt'] != null
           ? DateTime.tryParse(json['scheduledAt'])
           : null,
-      tripCode: json['tripCode']?.toString(),
-      status: json['status']?.toString(),
+      tripCode: json['tripCode']??"",
+      status: json['status']??"",
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'])
           : null,
@@ -55,10 +55,10 @@ class TripStatusModel {
           ? DateTime.tryParse(json['updatedAt'])
           : null,
       v: json['__v'],
-      driverId: json['driverId']?.toString(),
-      rating: json['rating'],
-      review: json['review']?.toString(),
-      price: json['price'],
+      driverId: json['driverId']??"",
+      rating: json['rating']??0,
+      review: json['review']??"",
+      price: json['price']??"",
       paymentInfo: json['paymentInfo'] != null &&
           json['paymentInfo'] is Map<String, dynamic>
           ? PaymentInfo.fromJson(json['paymentInfo'])
@@ -100,8 +100,8 @@ class PaymentInfo {
 
   factory PaymentInfo.fromJson(Map<String, dynamic> json) {
     return PaymentInfo(
-      method: json['method']?.toString(),
-      status: json['status']?.toString(),
+      method: json['method']??"",
+      status: json['status']??"",
     );
   }
 

@@ -33,7 +33,8 @@ class ClientLoginCubit extends Cubit<ClientLoginState> {
           print('Login successful: ${clientLoginModel.token}');
 
           user = clientLoginModel;
-         CacheHelper().saveData(key:ApiKeys.clientId, value:clientLoginModel.user.id);
+         CacheHelper().saveData(key:ApiKeys.clientId, value:clientLoginModel.user.id??"");
+          CacheHelper().saveData(key:ApiKeys.userId, value:clientLoginModel.user.id??"");
           // CacheHelper().saveData(
           //   key: ApiKeys.id,
           //   value: clientLoginModel.user.id,

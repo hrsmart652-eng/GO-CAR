@@ -127,6 +127,7 @@ Widget NormalRidetBody({
                   //   "=====================TripId : ${tripId
                   //       .toString()}========================",
                   // );
+                  print(CacheHelper().getData(key:ApiKeys.clientId));
                   Navigator.pushNamed(context, Routes.normalPayment,);
                 },
               ),
