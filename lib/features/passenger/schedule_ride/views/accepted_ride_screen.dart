@@ -21,7 +21,7 @@ class _AcceptedRideScreenState extends State<AcceptedRideScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async{
-     await context.read<ScheduledRideCubit>().fetchDriverData();
+      await context.read<ScheduledRideCubit>().fetchDriverData();
       context.read<ScheduledRideCubit>().startListeningTripAccept();
     });
   }

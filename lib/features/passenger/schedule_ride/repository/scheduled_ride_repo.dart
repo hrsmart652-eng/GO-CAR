@@ -143,11 +143,7 @@ class ScheduledRideRepository {
       final tripRes = response["trips"] as List<dynamic>;
 
       List<TripStatusModel> trips =
-          tripRes
-              .map(
-                (item) =>
-                    TripStatusModel.fromJson(item as Map<String, dynamic>),
-              )
+          tripRes.map((item) => TripStatusModel.fromJson(item as Map<String, dynamic>),)
               .toList();
 
       return right(trips);

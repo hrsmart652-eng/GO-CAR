@@ -23,7 +23,47 @@ import '../model/new_trip_response_model.dart';
 class ScheduledRideCubit extends Cubit<ScheduledRideState>
     implements RatingCubitInterface {
   ScheduledRideCubit({required this.scheduledRideRepository})
-      : super(ScheduledRideInitial());
+      : super(ScheduledRideInitial()){
+     // tripAcceptModel =TripStatusModel(
+     //   price: 0.0,
+     //   id: "",
+     //   v: 0,
+     //   review: "",
+     //   rating: 0,
+     //   driverId: "",
+     //   passengerNo: 1,
+     //   client: "",
+     //   status: "",
+     //   tripCode: "",
+     //   luggageNo: 0,
+     //   carType: "",
+     //   scheduledAt: DateTime.now(),
+     //   createdAt:DateTime.now(),
+     //   updatedAt: DateTime.now(),
+     //   paymentInfo: PaymentInfo(status: "",method: "")
+     // );
+     // scheduledRideResponse =ScheduledRideResponse(
+     //   success: false,
+     //   message: "",
+     //   distanceKm: 0.0,
+     //   price: 0.0,
+     //   trip:ScheduledRideModel(
+     //     price: 0.0,
+     //     tripId: "",
+     //     userId: "",
+     //     tripCode: "",
+     //     status: "",
+     //     carType: "",
+     //     luggageNo: 0,
+     //     passengerNo: 1,
+     //     driverShift: "",
+     //     paymentMethod: "",
+     //     scheduledAt: "",
+     //     currentLocation:{},
+     //     destination: {}
+     //   )
+     // );
+  }
 
   static ScheduledRideCubit get(context) =>
       BlocProvider.of<ScheduledRideCubit>(context);
@@ -57,7 +97,7 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState>
 
   @override
   double sliderValue = 2;
-
+  int requestN =0;
   final ScheduledRideRepository scheduledRideRepository;
   RequestRideRepository? requestRideRepository;
   DriverReviewsRepository? driverReviewsRepository;
@@ -301,14 +341,22 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState>
           (trip) {
         tripAcceptModel = trip;
         CacheHelper().saveData(key: ApiKeys.driverId, value: trip.driverId??"");
-        if (trip.status?.toLowerCase() == "accepted" ||
-            trip.status?.toLowerCase() == "completed") {
+        if (trip.status?.toLowerCase() == "accepted") {
+          ++requestN;
           debugPrint(
-            "***********Trip Status: ${trip.status} : Driver ID ${trip.driverId}*****************",
+            "***********Trip Accepted: ${trip.status} : Driver ID ${trip
+                .driverId}*****************",
           );
           emit(SchduledTripSuccessState(tripAccepted: trip));
           stopListeningTripAccept();
         }
+          if(  trip.status?.toLowerCase() == "completed"){
+            debugPrint(
+              "***********Trip Completed: ${trip.status} : Driver ID ${trip.driverId}*****************",
+            );
+            emit(SchduledTripSuccessState(tripAccepted: trip));
+            stopListeningTripAccept();
+          }
       },
     );
   }
@@ -478,6 +526,10 @@ class ScheduledRideCubit extends Cubit<ScheduledRideState>
     selectedCarType = carsAndNames[0]["type"];
     currentPassengersIndex = 1;
     paymentMethod = "";
+    tripAcceptModel = null;
+    scheduledRideResponse = null;
+    foundNewTrip = null;
+    isSeeMore = false;
     emit(SchduleResetTripState());
   }
 

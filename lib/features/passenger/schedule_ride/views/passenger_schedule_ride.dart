@@ -21,6 +21,7 @@ class PassengerScheduleRide extends StatefulWidget {
 
 class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
   @override
+  bool moreAc =false;
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -35,7 +36,6 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
     });
   }
 
-  bool isSeeMore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +49,7 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
         final schduleCubit = ScheduledRideCubit.get(context);
         final trip = schduleCubit.foundNewTrip;
         final status = trip?.status?.toLowerCase();
+        bool moreTrip =schduleCubit.requestN >1;
         final isAccepted =
             state is SchduledTripSuccessState &&
             state.tripAccepted.status?.toLowerCase() == "accepted";
@@ -107,7 +108,7 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
                             SizedBox(height: 10.h),
                             // if (isAccepted ||
                             //     schduleCubit.tripAcceptModel != null)
-                            if (schduleCubit.tripAcceptModel!=null&&schduleCubit.isSeeMore)
+                            if (schduleCubit.tripAcceptModel !=null&&schduleCubit.isSeeMore)
                               SchduleTripTransaction(
                                 key: const ValueKey("accepted"),
                                 image: Image.asset(
@@ -134,7 +135,7 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
                         ),
                       ),
                       SizedBox(height: 5.h),
-                      if (schduleCubit.tripAcceptModel!=null)
+                      if (schduleCubit.tripAcceptModel?.id !=null)
                         Container(
                           alignment: Alignment.centerRight,
                           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -144,7 +145,7 @@ class _PassengerScheduleRideState extends State<PassengerScheduleRide> {
                               schduleCubit.toggleSeeMoreLess();
                             },
                             child: Text(
-                              "${schduleCubit.isSeeMore? "See less" : "See more"}",
+                              "${schduleCubit.tripAcceptModel!=null?schduleCubit.isSeeMore? "See less" : "See more":""}",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Color(0xff266FFF),

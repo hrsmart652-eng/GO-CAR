@@ -58,7 +58,7 @@ class TripStatusModel {
       driverId: json['driverId']??"",
       rating: json['rating']??0,
       review: json['review']??"",
-      price: json['price']??"",
+      price: json['price']??0.0,
       paymentInfo: json['paymentInfo'] != null &&
           json['paymentInfo'] is Map<String, dynamic>
           ? PaymentInfo.fromJson(json['paymentInfo'])

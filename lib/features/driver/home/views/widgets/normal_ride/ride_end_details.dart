@@ -8,11 +8,13 @@ import 'package:go_car/features/driver/home/cubit/new_trip_cubit.dart';
 import 'package:go_car/features/driver/home/cubit/new_trip_state.dart';
 import 'package:go_car/features/driver/home/views/widgets/client.dart';
 import 'package:go_car/features/driver/home/views/widgets/normal_ride/rating.dart';
+
 import '../../../../../../core/widgets/custom_elevated_btn.dart';
+import '../../../model/new_trip_model.dart';
 
 class RideEndDetails extends StatelessWidget {
-  const RideEndDetails({super.key});
-
+   RideEndDetails({super.key});
+ NewTripModel? trip;
   void Rating(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -26,6 +28,7 @@ class RideEndDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: EdgeInsets.all(10),
       child: BlocConsumer<NewTripCubit, NewTripState>(
@@ -37,6 +40,19 @@ class RideEndDetails extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          final index = CacheHelper().getData(key: ApiKeys.index);
+          if (state is NewTripLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is NewTripSuccess) {
+            if (state.trips.isEmpty || index >= state.trips.length) {
+              return const Center(child: Text("Trip not available"));
+            }else{
+             trip = state.trips[index];
+            }
+          }
+
           return state is NewTripLoading
               ? CircularProgressIndicator()
               : state is NewTripSuccess
@@ -49,7 +65,7 @@ class RideEndDetails extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ClientDetails(
-                          index: CacheHelper().getData(key: ApiKeys.index),
+                          index:index
                           // name: 'John Doe',
                           // imageUrl: 'https://example.com/image.jpg',
                         ),
@@ -202,7 +218,7 @@ class RideEndDetails extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${state.trips[CacheHelper().getData(key: ApiKeys.index)].price} EGP',
+                                '${trip?.price} EGP',
                                 style: TextStyle(
                                   color: Color(0xff027A48),
 

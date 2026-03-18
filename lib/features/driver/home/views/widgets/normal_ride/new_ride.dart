@@ -69,7 +69,6 @@ class _NewRideState extends State<NewRide> {
                         child: Column(
                           children: [
                             ClientDetails(index: index),
-
                             SizedBox(height: 10.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,7 +190,7 @@ class _NewRideState extends State<NewRide> {
                               child: TextButton(
                                 onPressed: () {
                                   context.read<DriverRideCubit>().rejectRide(
-                                    state.trips.elementAt(index).id,
+                                    state.trips[index].id,
                                   );
                                 },
                                 child: Text(
@@ -220,6 +219,7 @@ class _NewRideState extends State<NewRide> {
                                       state.trips.elementAt(index).id,
                                     );
                                     print("trip id is :${state.trips.elementAt(index).id}");
+                                    CacheHelper().saveData(key:ApiKeys.index, value:index);
                                     print("cache trip id is :${CacheHelper().getData(key: ApiKeys.tripId)}");
                                     Navigator.pushNamed(context, Routes.ride);
                                   },

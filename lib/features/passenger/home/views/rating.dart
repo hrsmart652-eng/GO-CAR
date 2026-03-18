@@ -46,7 +46,7 @@ class _RatingScreenState extends State<Rating> {
         );
         Navigator.pushNamedAndRemoveUntil(
           context,
-          Routes.home,
+          Routes.schduleHome,
               (route) => false,
         );
       });
